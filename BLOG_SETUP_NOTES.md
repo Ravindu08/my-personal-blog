@@ -87,5 +87,21 @@
 - **My Projects Section:** `MyProjects.jsx` කියලා අලුත් Component එකක් හදලා, Projects ටික Image Hover Effects එක්ක ලස්සන Grid එකකට දැම්මා.
 
 ### 8. Deployment Preparation
-- **GitHub Repository:** `ravindu-labs-portfolio` නමින් අලුත් Monorepo එකක් සෑදීමට සූදානම් කර ඇත. (Frontend සහ Backend දෙකම එකම Repo එකේ).
+- **GitHub Repository:** `my-personal-blog` නමින් අලුත් Monorepo එකක් සාදා කෝඩ්ස් Push කළා. (Frontend සහ Backend දෙකම එකම Repo එකේ).
 - **Gitignore:** Backend එකේ විශාල ෆයිල්ස් (`.venv`) සහ රහස්‍ය තොරතුරු (`.env`) GitHub එකට upload වීම වැළැක්වීමට `my-project-backend` ෆෝල්ඩරය තුළ අලුතින් `.gitignore` ෆයිල් එකක් සෑදුවා.
+- **Git Push Timeout Fix:** පරණ පෙනුමේ තිබ්බ 11MB විතර ලොකු වීඩියෝ ෆයිල් එකක් නිසා Git push එක Timeout වුණා. ඒ නිසා ඒ වීඩියෝ එක අයින් කරලා තමයි Push කළේ.
+
+### 9. Layout Updates (Blog-Only Focus)
+- පරිශීලකයාට වෙනම Portfolio එකක් ඇති බැවින්, මේ අලුත් සයිට් එක **පිරිසිදු Tech Blog එකක්** පමණක් වන පරිදි වෙනස් කරන ලදී.
+- ඒ අනුව `MyProjects.jsx` සහ ඊට අදාළ Links ඉවත් කළා.
+- Hero Section එකේ බොත්තම් "Read My Articles" සහ "About the Author" ලෙස වෙනස් කළා.
+
+### 10. Backend Deployment (Render)
+- Render හරහා Backend එක Deploy කරද්දී `pydantic-core` library එකට අදාළව `maturin failed` (Rust compile error) එකක් ආවා (Python 3.14 නිසා).
+- **විසඳුම:** Render Environment Variables වලට `PYTHON_VERSION=3.11.0` එකතු කරලා Clear Cache & Deploy කිරීම හරහා ගැටළුව නිරාකරණය කළා.
+- **Render Free Tier සර්වර් හැසිරීම (Sleep Mode / Inactivity):**
+  - Render Free Web Service එකක් විනාඩි 15 ක් එක දිගට Request එකක් නොලැබුණොත් (Inactivity) **Sleep Mode (Spin Down)** එකට යයි.
+  - සයිට් එක Offline වෙන්නේ නැත. කවුරුහරි කෙනෙක් සයිට් එකට ඇවිල්ලා Backend එක call කරපු ගමන් ආපහු Wake up (Cold start) වේ.
+  - පළමු Request එකේදී Wake up වීමට තත්පර 30-50 ක කුඩා ප්‍රමාදයක් (initial delay) ඇති විය හැක. ඉන්පසු සාමාන්‍ය වේගයෙන් ක්‍රියාත්මක වේ.
+  - **හැමවෙලේම Awake තියාගන්නා ක්‍රමය (Free Keep-Alive):** UptimeRobot හෝ Cron-job හරහා සෑම විනාඩි 10 කට වරක් Backend URL එකට Ping එකක් (HTTP GET) යැවීමෙන් සර්වර් එක Sleep නොවී දිගටම 24/7 Active කර තබාගත හැක.
+

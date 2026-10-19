@@ -14,7 +14,7 @@ const normalizeBaseUrl = (value) => (value || '').trim().replace(/\/+$/, '');
 
 const envApiUrl = normalizeBaseUrl(import.meta.env.VITE_API_URL || import.meta.env.VITE_SHARE_API_URL);
 const localFallbackApiUrl = 'http://127.0.0.1:8000';
-const productionFallbackApiUrl = 'https://backen-ias-blog-3lf5.onrender.com';
+const productionFallbackApiUrl = 'https://my-personal-blog-6d3c.onrender.com';
 
 export const API_URL = envApiUrl || (import.meta.env.PROD ? productionFallbackApiUrl : localFallbackApiUrl);
 

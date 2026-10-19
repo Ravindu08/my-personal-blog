@@ -51,9 +51,8 @@ logger.info(f"CORS allowed origins: {all_origins}")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=all_origins,
-    # Allow local Vite dev hosts and any production frontend hosted under ravindulabs.com.
-    # FRONTEND_URL still wins when it is configured explicitly.
-    allow_origin_regex=r"https?://((localhost|127\.0\.0\.1)(:\d+)?|([a-zA-Z0-9-]+\.)?ravindulabs\.org)$",
+    # Allow local Vite dev hosts, any Vercel preview/production URLs, and custom domain
+    allow_origin_regex=r"https?://((localhost|127\.0\.0\.1)(:\d+)?|([a-zA-Z0-9-]+\.)?ravindulabs\.(com|org)|([a-zA-Z0-9-]+\.)?vercel\.app)$",
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"],
     allow_headers=["*"],
@@ -95,6 +94,16 @@ async def on_startup():
 @app.on_event("shutdown")
 async def on_shutdown():
     await close_mongo_connection()
+
+@app.get("/", tags=["root"])
+async def root():
+    return {
+        "name": "Ravindu Labs Blog API",
+        "status": "online",
+        "version": "0.1.0",
+        "docs": "/docs",
+        "health": "/health"
+    }
 
 app.include_router(health_router, prefix="/health")
 app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
