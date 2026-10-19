@@ -134,6 +134,7 @@
 - **ක්රමය 2 (Google One-Click Login):**
   - **Email:** `tharushagimhan01@gmail.com` (Superuser Admin permissions ලබා දී ඇත). "Sign in with Google" ක්ලික් කර කෙලින්ම Dashboard එකට පිවිසිය හැක.
 
-
-
-
+### 14. Troubleshooting: Render CORS Fix (Manual Deploy)
+- **ගැටළුව:** Vercel එකේ Login වෙන්න හදද්දී Login නොවී නතර වීම.
+- **හේතුව:** Render එකේ දුවන පරණ Backend Version එකේ CORS Settings වල Vercel (`*.vercel.app`) Domain එක Allow කර නොතිබීම (`Disallowed CORS origin`).
+- **විසඳුම:** Render Dashboard එකට ගොස් **Manual Deploy ➡️ Deploy latest commit** ක්ලික් කර අලුත්ම කෝඩ් එක Deploy කරගත යුතුය. තවද Render Environment Variables වල `FRONTEND_URL` එකට `https://my-personal-blog-sigma.vercel.app` ලබා දිය හැක.
