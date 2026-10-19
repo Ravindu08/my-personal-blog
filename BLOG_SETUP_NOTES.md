@@ -126,5 +126,14 @@
 - **Swagger API Docs:** [https://my-personal-blog-6d3c.onrender.com/docs](https://my-personal-blog-6d3c.onrender.com/docs)
 - **Database:** MongoDB Atlas (`ravindu_labs`)
 
+### 13. Blog Admin Credentials (Dashboard Access)
+- **Login URL:** [https://my-personal-blog-sigma.vercel.app/login](https://my-personal-blog-sigma.vercel.app/login) (හෝ Local: `http://localhost:5173/login`)
+- **ක්රමය 1 (Email & Password):**
+  - **Email:** `admin@ravindulabs.com`
+  - **Password:** `Admin@123`
+- **ක්රමය 2 (Google One-Click Login):**
+  - **Email:** `tharushagimhan01@gmail.com` (Superuser Admin permissions ලබා දී ඇත). "Sign in with Google" ක්ලික් කර කෙලින්ම Dashboard එකට පිවිසිය හැක.
+
+
 
 
