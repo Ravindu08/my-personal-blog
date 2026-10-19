@@ -120,4 +120,11 @@
   - **cPanel (Traditional Shared Hosting):** Hostinger, Namecheap, GoDaddy වැනි සාම්ප්‍රදායික Hosting වල File Manager එකට `dist` හෝ `build` folder එක Zip කර manual Upload කළ යුතුය. Update කරන සෑම විටකම නැවත Build කර Upload කළ යුතුය.
   - **Vercel (Modern Git-based Cloud):** cPanel හෝ File Manager අවශ්‍ය නැත. GitHub එකට `git push` කළ සැනින් Vercel Cloud එක විසින්ම Code එක Build කර තත්පර ගණනකින් Live කරයි (CI/CD).
 
+### 12. Deployment Complete (Live Website URLs)
+- **Live Frontend (Vercel):** [https://my-personal-blog-sigma.vercel.app/](https://my-personal-blog-sigma.vercel.app/)
+- **Live Backend API (Render):** [https://my-personal-blog-6d3c.onrender.com/](https://my-personal-blog-6d3c.onrender.com/)
+- **Swagger API Docs:** [https://my-personal-blog-6d3c.onrender.com/docs](https://my-personal-blog-6d3c.onrender.com/docs)
+- **Database:** MongoDB Atlas (`ravindu_labs`)
+
+
 
