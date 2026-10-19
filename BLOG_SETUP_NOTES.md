@@ -158,3 +158,14 @@
      - ලිපිය කියවන විට Window එක මුදුනේ දිස්වන **Reading Scroll Progress Bar**.
      - ලිපිය අවසානයේ කතුවරයාගේ අත්සන (Micro-Author Bio).
      - **Related Articles ("Keep Reading More Articles")** නිර්දේශ.
+
+### 16. Online Images & Production Asset Resolution Fix
+- **ගැටළුව:** Online Mode (Vercel) එකේදී ලිපි වල පින්තූර නොපෙනී යාම (Broken / Missing Images).
+- **හේතු:**
+  1. **Localhost Links:** MongoDB Database එකේ FeaturedImage සහ AuthorImage ලින්ක්ස් save වී තිබුණේ `http://127.0.0.1:8000/uploads/...` (Localhost) ලෙසයි. පිටතින් එන අයට Localhost Load කළ නොහැකි අතර HTTPS සයිට් වලදී Mixed Content ලෙස Browser එක විසින් ඒවා Block කරයි.
+  2. **Gitignore:** Backend එකේ `uploads/` ෆෝල්ඩරය `.gitignore` කර තිබූ නිසා Render එකට එම Image Files upload වී නොතිබුණි.
+- **විසඳුම:**
+  1. `my-project/public/uploads/` නමින් Frontend එක තුළම Image Assets ස්ථාපිත කළා. එමඟින් Vercel Global Edge CDN හරහා පින්තූර 100% ක්ම Online වේගයෙන් Load වේ.
+  2. MongoDB Atlas Database එකේ තිබූ image links සියල්ල `/uploads/...` ලෙස Relative Clean Path වලට Update කළා.
+  3. `imageUtils.js` මඟින් Frontend එකේදී සියලුම Image URLs ස්වයංක්‍රීයව Normalize කර, කිසියම් පින්තූරයක් Load වීමට අපොහොසත් වුවහොත් Category එකට අදාළ HD Cover එකකට Fallback වන පරිදි Error Handling එකතු කළා.
+

@@ -6,6 +6,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { FaGithub, FaLinkedin, FaBookOpen, FaClock, FaArrowRight, FaTerminal } from 'react-icons/fa';
 import api from '../services/api';
 import { articlesData } from '../data';
+import { getValidImageUrl, handleImageError } from '../utils/imageUtils';
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -189,8 +190,9 @@ const Hero = () => {
                 {/* Image Cover Container */}
                 <div className="relative h-56 sm:h-64 overflow-hidden bg-slate-950">
                   <img
-                    src={featured.featuredImage || 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1000'}
+                    src={getValidImageUrl(featured.featuredImage, featured.category)}
                     alt={featured.title}
+                    onError={(e) => handleImageError(e, featured.category)}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent"></div>

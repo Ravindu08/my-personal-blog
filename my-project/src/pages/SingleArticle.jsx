@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { FaHeart, FaRegHeart, FaEye, FaComment, FaShare, FaCheck, FaArrowLeft, FaClock, FaCalendarAlt, FaTwitter, FaLinkedin, FaGithub } from 'react-icons/fa';
 import api, { API_URL, engagementAPI, commentsAPI } from '../services/api';
 import ArticleCard from '../components/ArticleCard';
+import { getValidImageUrl, handleImageError } from '../utils/imageUtils';
 
 const SingleArticle = () => {
   const { slug } = useParams();
@@ -173,8 +174,7 @@ const SingleArticle = () => {
 
   const authorName = (article.author || 'Ravindu Tharusha').replace(/\b([A-Za-z]+)'s\b/g, '$1').trim();
   const authorImage =
-    article.authorImage ||
-    article.profile_image ||
+    getValidImageUrl(article.authorImage || article.profile_image) ||
     `https://ui-avatars.com/api/?name=${encodeURIComponent(authorName)}&background=00A39C&color=fff`;
 
   const displayDate = article.createdAt
@@ -229,6 +229,10 @@ const SingleArticle = () => {
             <img
               src={authorImage}
               alt={authorName}
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(authorName)}&background=00A39C&color=fff`;
+              }}
               className="w-11 h-11 rounded-full object-cover border-2 border-teal-500/40"
             />
             <div>
@@ -279,8 +283,9 @@ const SingleArticle = () => {
         {article.featuredImage && (
           <div className="relative rounded-2xl overflow-hidden mb-12 border border-white/10 shadow-2xl bg-slate-950 aspect-video max-h-[460px]">
             <img
-              src={article.featuredImage}
+              src={getValidImageUrl(article.featuredImage, article.category)}
               alt={article.title}
+              onError={(e) => handleImageError(e, article.category)}
               className="w-full h-full object-cover"
             />
           </div>

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { FaHeart, FaRegHeart, FaEye, FaComment, FaClock, FaShareAlt, FaCheck, FaArrowRight } from 'react-icons/fa';
 import { engagementAPI, commentsAPI, API_URL } from '../services/api';
+import { getValidImageUrl, handleImageError } from '../utils/imageUtils';
 
 const ArticleCard = ({ article, index }) => {
   const navigate = useNavigate();
@@ -75,8 +76,7 @@ const ArticleCard = ({ article, index }) => {
 
   const authorName = (article.author || 'Ravindu Tharusha').replace(/\b([A-Za-z]+)'s\b/g, '$1').trim();
   const authorImage =
-    article.authorImage ||
-    article.profile_image ||
+    getValidImageUrl(article.authorImage || article.profile_image) ||
     `https://ui-avatars.com/api/?name=${encodeURIComponent(authorName)}&background=00A39C&color=fff`;
 
   // Format date
@@ -97,9 +97,10 @@ const ArticleCard = ({ article, index }) => {
       {/* Cover Image Container */}
       <div className="relative aspect-video w-full overflow-hidden bg-slate-900">
         <img
-          src={article.featuredImage || 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=800'}
+          src={getValidImageUrl(article.featuredImage, article.category)}
           alt={article.title}
           loading="lazy"
+          onError={(e) => handleImageError(e, article.category)}
           className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent"></div>
@@ -148,6 +149,10 @@ const ArticleCard = ({ article, index }) => {
               <img
                 src={authorImage}
                 alt={authorName}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(authorName)}&background=00A39C&color=fff`;
+                }}
                 className="w-6 h-6 rounded-full object-cover border border-slate-200"
               />
               <span className="text-xs font-medium text-slate-700 truncate">{authorName}</span>
