@@ -105,3 +105,15 @@
   - පළමු Request එකේදී Wake up වීමට තත්පර 30-50 ක කුඩා ප්‍රමාදයක් (initial delay) ඇති විය හැක. ඉන්පසු සාමාන්‍ය වේගයෙන් ක්‍රියාත්මක වේ.
   - **හැමවෙලේම Awake තියාගන්නා ක්‍රමය (Free Keep-Alive):** UptimeRobot හෝ Cron-job හරහා සෑම විනාඩි 10 කට වරක් Backend URL එකට Ping එකක් (HTTP GET) යැවීමෙන් සර්වර් එක Sleep නොවී දිගටම 24/7 Active කර තබාගත හැක.
 
+### 11. Frontend Deployment (Vercel)
+- **Vercel යනු කුමක්ද?:** React, Vite, Next.js වැනි Frontend වෙබ් අඩවි නොමිලේ අන්තර්ජාලයට (Live Cloud Hosting) දැමීමට ලෝකයේ තිබෙන ප්‍රමුඛතම සහ වේගවත්ම Platform එකකි.
+- **Render සහ Vercel වෙනස:**
+  - **Render:** Python / FastAPI / Database වැනි Backend සේවා host කිරීමට යොදා ගනී.
+  - **Vercel:** අපගේ ඇසට පෙනෙන Visual Website (React Frontend - `my-project`) එක host කිරීමට යොදා ගනී.
+- **Vercel වල වාසි:**
+  - සම්පූර්ණයෙන්ම Free (Hobby plan).
+  - Global Edge Network (CDN) එකක් ඇති බැවින් ශ්‍රී ලංකාව ඇතුළු ලෝකයේ ඕනෑම තැනක සිට ඉතා වේගයෙන් (Milliseconds වලින්) වෙබ් අඩවිය Load වේ.
+  - Frontend එක කිසිවිටකත් Sleep වන්නේ නැත (24/7 Instant).
+  - GitHub එකට `git push` කරන සෑම විටකම ස්වයංක්‍රීයව අලුත් Version එක Live වෙබ් අඩවියට Update වේ (Automatic CI/CD).
+  - නොමිලේ SSL (`https://`) සහ `.vercel.app` Domain එකක් හිමි වේ (Custom Domain ද සම්බන්ධ කළ හැක).
+
