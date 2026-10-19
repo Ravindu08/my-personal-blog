@@ -16,7 +16,7 @@ const Newsletter = () => {
   };
 
   return (
-    <section className="py-24 bg-white px-4">
+    <section id="newsletter" name="newsletter" className="py-24 bg-white px-4">
       <div className="max-w-6xl mx-auto">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* Left Content */}

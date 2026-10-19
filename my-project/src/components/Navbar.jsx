@@ -61,8 +61,8 @@ const Navbar = () => {
 
   const links = [
     { id: 'home', title: 'Home' },
-    { id: 'about', title: 'About Me' },
-    { id: 'articles', title: 'Articles' },
+    { id: 'articles-feed', title: 'Articles' },
+    { id: 'newsletter', title: 'Newsletter' },
   ];
   
   const activeLinkClass = "text-[#00A39C]";

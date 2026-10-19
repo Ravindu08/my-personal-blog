@@ -2,8 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaHeart, FaRegHeart, FaEye, FaComment, FaShare, FaCheck } from 'react-icons/fa';
+import { FaHeart, FaRegHeart, FaEye, FaComment, FaShare, FaCheck, FaArrowLeft, FaClock, FaCalendarAlt, FaTwitter, FaLinkedin, FaGithub } from 'react-icons/fa';
 import api, { API_URL, engagementAPI, commentsAPI } from '../services/api';
+import ArticleCard from '../components/ArticleCard';
 
 const SingleArticle = () => {
   const { slug } = useParams();
@@ -18,9 +19,28 @@ const SingleArticle = () => {
   const [comments, setComments] = useState([]);
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [newComment, setNewComment] = useState('');
+  const [commentAuthor, setCommentAuthor] = useState('');
   const [shareCopied, setShareCopied] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [relatedArticles, setRelatedArticles] = useState([]);
+
+  // Reading scroll progress tracker
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalScroll > 0) {
+        const currentProgress = (window.scrollY / totalScroll) * 100;
+        setScrollProgress(Math.min(100, Math.max(0, currentProgress)));
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
     const fetchArticle = async () => {
       try {
         setLoading(true);
@@ -28,7 +48,7 @@ const SingleArticle = () => {
         setArticle(response.data);
         setLikesCount(response.data.likesCount || 0);
         setViewCount(response.data.viewCount || 0);
-        
+
         // Load comments
         const articleId = response.data.id || response.data._id;
         if (articleId) {
@@ -42,41 +62,29 @@ const SingleArticle = () => {
             setCommentsLoading(false);
           }
         }
-        
-        // Track view on page load
+
+        // Track view
         try {
           const viewResult = await engagementAPI.recordView(slug);
-          setViewCount(viewResult.viewCount);
+          if (viewResult?.viewCount !== undefined) {
+            setViewCount(viewResult.viewCount);
+          }
         } catch (err) {
           console.error('Error recording view:', err);
         }
-        // Set page meta tags for sharing (client-side)
+
+        // Fetch related articles
         try {
-          const title = response.data.title || '';
-          const description = response.data.shortDescription || '';
-          const image = response.data.featuredImage || '';
-          const url = (window.location.origin || `${window.location.protocol}//${window.location.host}`) + `/article/${slug}`;
+          const allRes = await api.get('/articles/', { params: { limit: 4 } });
+          const items = (allRes.data?.items || []).filter(a => a.slug !== slug).slice(0, 3);
+          setRelatedArticles(items);
+        } catch (e) {
+          // ignore
+        }
 
-          document.title = title || document.title;
-
-          const setMeta = (prop, content, attr = 'property') => {
-            if (!content) return;
-            let el = document.querySelector(`meta[${attr}="${prop}"]`);
-            if (!el) {
-              el = document.createElement('meta');
-              el.setAttribute(attr, prop);
-              document.head.appendChild(el);
-            }
-            el.setAttribute('content', content);
-          };
-
-          setMeta('og:title', title);
-          setMeta('og:description', description);
-          setMeta('og:url', url);
-          if (image) setMeta('og:image', image);
-          setMeta('twitter:card', image ? 'summary_large_image' : 'summary');
-        } catch (err) {
-          console.error('Error setting meta tags:', err);
+        // Set document title
+        if (response.data.title) {
+          document.title = `${response.data.title} | Ravindu Labs`;
         }
       } catch (err) {
         console.error('Error fetching article:', err);
@@ -89,56 +97,56 @@ const SingleArticle = () => {
     fetchArticle();
   }, [slug]);
 
-  const handleLikeClick = async (e) => {
-    e.stopPropagation();
+  const handleLikeClick = async () => {
+    const prevLiked = liked;
+    const prevCount = likesCount;
+    setLiked(!liked);
+    setLikesCount(liked ? likesCount - 1 : likesCount + 1);
+
     try {
       const result = await engagementAPI.toggleLike(slug);
       setLiked(result.liked);
       setLikesCount(result.likesCount);
     } catch (err) {
-      console.error('Error toggling like:', err);
+      setLiked(prevLiked);
+      setLikesCount(prevCount);
     }
   };
 
   const handleSubmitComment = async (e) => {
     e.preventDefault();
     if (!newComment.trim()) return;
+
     try {
       const articleId = article?.id || article?._id;
       if (!articleId) return;
       const created = await commentsAPI.createComment(
         articleId,
-        newComment.trim()
+        newComment.trim(),
+        commentAuthor.trim() || 'Reader'
       );
       setComments([created, ...comments]);
       setNewComment('');
+      setCommentAuthor('');
     } catch (err) {
       console.error('Error creating comment:', err);
     }
   };
 
   const handleShareClick = () => {
-    // Use the backend share endpoint so social crawlers can read Open Graph tags.
-    const shareLink = `${API_URL}/share/${slug}`;
-    
-    navigator.clipboard.writeText(shareLink).then(() => {
+    const shareUrl = window.location.href;
+    navigator.clipboard.writeText(shareUrl).then(() => {
       setShareCopied(true);
       setTimeout(() => setShareCopied(false), 2000);
     });
   };
 
-  const handleFacebookShare = () => {
-    const shareLink = `${API_URL}/share/${slug}`;
-    const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareLink)}&quote=${encodeURIComponent(article?.title || 'Check out this article')}`;
-    window.open(facebookShareUrl, 'facebook-share-dialog', 'width=626,height=436');
-  };
-
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white pt-20">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00A39C] mx-auto"></div>
-          <p className="mt-4 text-slate-600">Loading article...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-400 mx-auto mb-4"></div>
+          <p className="text-slate-300 font-mono text-sm">Loading article deep dive...</p>
         </div>
       </div>
     );
@@ -146,173 +154,266 @@ const SingleArticle = () => {
 
   if (error || !article) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-slate-800 mb-4">404 - Article Not Found</h1>
-          <p className="text-slate-600 mb-6">{error || 'The article you are looking for does not exist.'}</p>
-          <button 
-            onClick={() => navigate(location.state?.from === 'dashboard' ? '/dashboard' : '/')}
-            className="bg-[#00A39C] text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700 transition-colors"
+      <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white pt-20 px-4">
+        <div className="text-center max-w-md">
+          <h1 className="text-4xl font-extrabold text-white mb-3">404 - Article Not Found</h1>
+          <p className="text-slate-400 text-sm mb-6 leading-relaxed">
+            {error || 'The technical article you are looking for might have been moved or removed.'}
+          </p>
+          <button
+            onClick={() => navigate('/')}
+            className="px-6 py-2.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-sm transition-all shadow-lg shadow-teal-500/20"
           >
-            ← Back
+            ← Return to Publication
           </button>
         </div>
       </div>
     );
   }
 
-  const authorName = (article.author || 'Anonymous').replace(/\b([A-Za-z]+)'s\b/g, '$1').trim();
-  const authorImage = article.authorImage || article.profile_image || `https://ui-avatars.com/api/?name=${encodeURIComponent(authorName)}&background=00A39C&color=fff`;
+  const authorName = (article.author || 'Ravindu Tharusha').replace(/\b([A-Za-z]+)'s\b/g, '$1').trim();
+  const authorImage =
+    article.authorImage ||
+    article.profile_image ||
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(authorName)}&background=00A39C&color=fff`;
+
+  const displayDate = article.createdAt
+    ? new Date(article.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+    : article.date || 'Recent';
 
   return (
-    <div className="pt-32 pb-16 bg-white min-h-screen">
-      <div className="max-w-4xl mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <button 
-            onClick={() => navigate(location.state?.from === 'dashboard' ? '/dashboard' : '/')}
-            className="text-[#00A39C] hover:text-teal-700 font-semibold mb-4 flex items-center gap-2"
+    <div className="bg-[#0b0f19] text-slate-100 min-h-screen">
+      {/* Realtime Reading Progress Bar */}
+      <div
+        className="fixed top-0 left-0 h-1 bg-gradient-to-r from-teal-400 via-cyan-400 to-indigo-500 z-50 transition-all duration-150"
+        style={{ width: `${scrollProgress}%` }}
+      />
+
+      <div className="pt-28 md:pt-36 pb-20 px-4 max-w-4xl mx-auto">
+        {/* Top Navigation Bar */}
+        <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/10 text-xs">
+          <button
+            onClick={() => navigate('/')}
+            className="inline-flex items-center gap-2 text-teal-400 hover:text-teal-300 font-mono transition-colors"
           >
-            ← Back to {location.state?.from === 'dashboard' ? 'Dashboard' : 'Home'}
+            <FaArrowLeft size={12} />
+            <span>Back to All Articles</span>
           </button>
-          
-          <p className="font-semibold text-[#00A39C] mb-2">{article.category}</p>
-          <h1 className="text-4xl md:text-6xl font-extrabold text-slate-800 mb-4 leading-tight">{article.title}</h1>
-          
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center text-gray-500 mb-8 border-b border-gray-200 pb-4">
-            <img src={authorImage} alt={authorName} className="w-10 h-10 rounded-full object-cover border border-slate-200" />
+
+          <div className="flex items-center gap-3 text-slate-400">
+            <span className="flex items-center gap-1 font-mono">
+              <FaEye size={12} /> {viewCount} views
+            </span>
+            <span>•</span>
+            <span className="flex items-center gap-1 font-mono">
+              <FaClock size={12} /> {article.readingTime || '5 min read'}
+            </span>
+          </div>
+        </div>
+
+        {/* Category Pill */}
+        <div className="mb-4">
+          <span className="px-3.5 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider bg-teal-500/10 text-teal-300 border border-teal-500/30">
+            {article.category || 'Tech'}
+          </span>
+        </div>
+
+        {/* Title */}
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white leading-[1.18] tracking-tight mb-6">
+          {article.title}
+        </h1>
+
+        {/* Author & Published Info Row */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-4 mb-8 border-y border-white/10">
+          <div className="flex items-center gap-3">
+            <img
+              src={authorImage}
+              alt={authorName}
+              className="w-11 h-11 rounded-full object-cover border-2 border-teal-500/40"
+            />
             <div>
-              <p className="font-semibold text-slate-700">{authorName}</p>
-              <p className="text-sm">{new Date(article.createdAt).toLocaleDateString()} • {article.readingTime || '5 min read'}</p>
-            </div>
-            
-            {/* Engagement stats */}
-            <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-sm sm:ml-auto">
-              <div className="flex items-center gap-1 text-gray-600">
-                <FaEye size={14} />
-                <span>{viewCount}</span>
+              <p className="font-bold text-slate-200 text-sm">{authorName}</p>
+              <div className="flex items-center gap-2 text-xs text-slate-400 font-mono">
+                <span>{displayDate}</span>
+                <span>•</span>
+                <span className="text-teal-400 font-semibold">{article.readingTime || '5 min read'}</span>
               </div>
-              <button
-                onClick={handleLikeClick}
-                className="flex items-center gap-1 font-semibold transition-colors"
-              >
-                {liked ? (
-                  <>
-                    <FaHeart size={16} className="text-red-500" />
-                    <span className="text-red-500">{likesCount}</span>
-                  </>
-                ) : (
-                  <>
-                    <FaRegHeart size={16} className="text-gray-400 hover:text-red-500" />
-                    <span className="text-gray-600">{likesCount}</span>
-                  </>
-                )}
-              </button>
-              
-              {/* Share buttons */}
-              <button
-                onClick={handleShareClick}
-                className="flex items-center gap-1 px-4 py-2 bg-slate-100 rounded-lg text-slate-600 hover:bg-slate-200 transition-colors"
-                title="Copy share link"
-              >
-                <FaShare size={14} />
-                <span className="text-xs">{shareCopied ? '✓ Copied' : 'Copy'}</span>
-              </button>
-              
-              <button
-                onClick={handleFacebookShare}
-                className="flex items-center gap-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                title="Share on Facebook"
-              >
-                <span className="text-xs">f</span>
-              </button>
             </div>
           </div>
-          
-          {article.featuredImage && (
-            <img 
-              src={article.featuredImage} 
-              alt={article.title} 
-              className="w-full h-auto max-h-[500px] object-contain bg-slate-50 rounded-lg mb-12 shadow-lg" 
+
+          {/* Social Reaction and Share Actions */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleLikeClick}
+              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl border text-xs font-bold transition-all ${
+                liked
+                  ? 'bg-rose-500/10 border-rose-500/40 text-rose-400'
+                  : 'bg-white/5 border-white/10 text-slate-300 hover:border-rose-500/30 hover:text-rose-400'
+              }`}
+            >
+              {liked ? <FaHeart size={14} className="text-rose-500" /> : <FaRegHeart size={14} />}
+              <span>{likesCount} Likes</span>
+            </button>
+
+            <button
+              onClick={handleShareClick}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-slate-300 text-xs font-medium transition-colors"
+              title="Copy link"
+            >
+              {shareCopied ? (
+                <>
+                  <FaCheck size={12} className="text-teal-400" />
+                  <span className="text-teal-400 font-semibold">Copied!</span>
+                </>
+              ) : (
+                <>
+                  <FaShare size={12} />
+                  <span>Share</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Featured Image */}
+        {article.featuredImage && (
+          <div className="relative rounded-2xl overflow-hidden mb-12 border border-white/10 shadow-2xl bg-slate-950 aspect-video max-h-[460px]">
+            <img
+              src={article.featuredImage}
+              alt={article.title}
+              className="w-full h-full object-cover"
             />
-          )}
-        </motion.div>
-        
-        {/* Short Description */}
-        {article.shortDescription && (
-          <div className="text-xl text-slate-600 mb-8 pb-8 border-b border-gray-200 italic">
-            {article.shortDescription}
           </div>
         )}
-        
-        {/* Article Content */}
-        <div className="prose lg:prose-xl max-w-none text-slate-700 whitespace-pre-wrap">
+
+        {/* Short Summary Callout */}
+        {article.shortDescription && (
+          <div className="p-5 sm:p-6 rounded-2xl bg-teal-950/20 border-l-4 border-teal-400 border-y border-r border-white/5 mb-10 text-base sm:text-lg text-slate-300 font-light leading-relaxed italic">
+            "{article.shortDescription}"
+          </div>
+        )}
+
+        {/* Article Full Content */}
+        <article className="prose prose-invert prose-slate lg:prose-lg max-w-none text-slate-200 leading-relaxed font-light whitespace-pre-wrap mb-12">
           {article.content}
-        </div>
-        
+        </article>
+
         {/* Tags */}
         {article.tags && article.tags.length > 0 && (
-          <div className="mt-8 flex flex-wrap gap-2">
-            {article.tags.map((tag, index) => (
-              <span 
-                key={index}
-                className="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-sm font-semibold"
+          <div className="flex flex-wrap items-center gap-2 pt-6 border-t border-white/10 mb-12">
+            <span className="text-xs font-mono text-slate-400 mr-2">Tags:</span>
+            {article.tags.map((tag, idx) => (
+              <span
+                key={idx}
+                className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-teal-300 hover:border-teal-500/30 transition-colors"
               >
                 #{tag}
               </span>
             ))}
           </div>
         )}
-        
-        {/* Author Info */}
-        <div className="mt-16 border-t border-gray-200 pt-8">
-          <h3 className="text-2xl font-bold text-slate-800 mb-4">About the Author</h3>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-slate-100 p-4 sm:p-6 rounded-lg">
-            <img src={authorImage} alt={authorName} className="w-16 h-16 rounded-full object-cover border border-slate-200" />
-            <div>
-              <h4 className="font-bold text-xl text-slate-800">{authorName}</h4>
-              <p className="text-gray-500">{article.authorEmail || 'A passionate contributor to the Ravindu Labs.'}</p>
+
+        {/* Compact Author Signature Box */}
+        <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md flex flex-col sm:flex-row items-center sm:items-start gap-5 mb-16">
+          <img
+            src={authorImage}
+            alt={authorName}
+            className="w-16 h-16 rounded-full object-cover border-2 border-teal-400 shadow-md flex-shrink-0"
+          />
+          <div className="text-center sm:text-left flex-grow">
+            <div className="flex items-center justify-center sm:justify-between mb-1">
+              <h3 className="font-bold text-white text-base">Written by {authorName}</h3>
+              <span className="hidden sm:inline-block text-xs font-mono text-teal-400">Author & Engineer</span>
+            </div>
+            <p className="text-slate-300 text-xs sm:text-sm font-light leading-relaxed mb-3">
+              Full-Stack Software Engineer exploring web development, scalable backends, and cloud architectures.
+            </p>
+            <div className="flex items-center justify-center sm:justify-start gap-3 text-xs text-slate-400">
+              <a
+                href="https://github.com/Ravindu08"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 hover:text-teal-300 transition-colors"
+              >
+                <FaGithub size={13} /> GitHub
+              </a>
+              <span>•</span>
+              <a
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 hover:text-teal-300 transition-colors"
+              >
+                <FaLinkedin size={13} /> LinkedIn
+              </a>
             </div>
           </div>
         </div>
 
-        {/* Comments Section */}
-        <div className="mt-16 border-t border-gray-200 pt-8">
-          <h3 className="text-2xl font-bold text-slate-800 mb-6">Comments</h3>
+        {/* Related Articles Section */}
+        {relatedArticles.length > 0 && (
+          <div className="mb-16">
+            <h3 className="text-xl sm:text-2xl font-bold text-white mb-6 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-teal-400"></span> Keep Reading More Articles
+            </h3>
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {relatedArticles.map((relArt, index) => (
+                <ArticleCard key={relArt.slug || index} article={relArt} index={index} />
+              ))}
+            </div>
+          </div>
+        )}
 
-          <form onSubmit={handleSubmitComment} className="space-y-4 mb-8">
+        {/* Comments Section */}
+        <div id="comments" className="pt-8 border-t border-white/10">
+          <h3 className="text-xl sm:text-2xl font-bold text-white mb-6 flex items-center gap-2">
+            <FaComment className="text-teal-400" size={18} />
+            Discussion ({comments.length})
+          </h3>
+
+          {/* Comment Form */}
+          <form onSubmit={handleSubmitComment} className="p-5 rounded-2xl bg-white/5 border border-white/10 mb-8 space-y-3">
+            <div className="grid sm:grid-cols-2 gap-3">
+              <input
+                type="text"
+                placeholder="Your Name (optional)"
+                value={commentAuthor}
+                onChange={(e) => setCommentAuthor(e.target.value)}
+                className="px-3.5 py-2 rounded-xl bg-slate-900 border border-white/10 text-white placeholder-slate-500 text-xs focus:outline-none focus:ring-1 focus:ring-teal-400"
+              />
+            </div>
             <textarea
-              placeholder="Write your comment..."
+              placeholder="Leave a thought, question, or feedback..."
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              rows="4"
-              className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none"
+              rows="3"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-white/10 text-white placeholder-slate-500 text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-teal-400"
               required
             />
             <button
               type="submit"
-              className="bg-[#00A39C] text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700 transition-colors"
+              className="px-5 py-2 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs transition-colors shadow-md shadow-teal-500/20"
             >
               Post Comment
             </button>
           </form>
 
+          {/* Comments List */}
           {commentsLoading ? (
-            <p className="text-slate-600">Loading comments...</p>
+            <p className="text-slate-400 text-xs font-mono">Loading discussions...</p>
           ) : comments.length === 0 ? (
-            <p className="text-slate-600">Be the first to comment.</p>
+            <p className="text-slate-500 text-sm italic">No comments yet. Start the conversation!</p>
           ) : (
-            <div className="space-y-4">
-              {comments.map((c) => (
-                <div key={c.id} className="border border-slate-200 rounded-lg p-4 bg-white shadow-sm">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="font-semibold text-slate-800">{c.author || 'Guest'}</p>
-                    <span className="text-xs text-slate-500">{new Date(c.created_at).toLocaleString()}</span>
+            <div className="space-y-3">
+              {comments.map((c, i) => (
+                <div key={c.id || i} className="p-4 rounded-xl bg-white/5 border border-white/10 text-sm">
+                  <div className="flex items-center justify-between mb-1.5 text-xs">
+                    <span className="font-bold text-teal-300">{c.author || 'Reader'}</span>
+                    <span className="text-slate-500 font-mono text-[11px]">
+                      {c.created_at ? new Date(c.created_at).toLocaleDateString() : 'Recent'}
+                    </span>
                   </div>
-                  <p className="text-slate-700 whitespace-pre-wrap">{c.content}</p>
+                  <p className="text-slate-300 font-light leading-relaxed whitespace-pre-wrap">{c.content}</p>
                 </div>
               ))}
             </div>
@@ -322,4 +423,5 @@ const SingleArticle = () => {
     </div>
   );
 };
+
 export default SingleArticle;

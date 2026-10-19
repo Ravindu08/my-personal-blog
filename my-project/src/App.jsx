@@ -19,25 +19,15 @@ import ArticleSubmission from './pages/ArticleSubmission';
 import SingleArticle from './pages/SingleArticle';
 import Articles from './pages/Articles';
 
-function HomeContent({ selectedCategory, setSelectedCategory, selectedArticle, setSelectedArticle }) {
+function HomeContent({ selectedCategory, setSelectedCategory }) {
   return (
-    <div className="bg-slate-50">
+    <div className="bg-slate-50 min-h-screen">
       <main>
         <Hero />
-        <AboutMe />
-
-        <section id="articles" className="pt-12">
-          <Categories 
-            selectedCategory={selectedCategory} 
-            setSelectedCategory={setSelectedCategory} 
-          />
-          <ArticleFeed 
-            selectedCategory={selectedCategory} 
-            selectedArticle={selectedArticle} 
-            setSelectedArticle={setSelectedArticle}
-          />
-        </section>
-        
+        <ArticleFeed 
+          selectedCategory={selectedCategory} 
+          setSelectedCategory={setSelectedCategory} 
+        />
         <Newsletter />
       </main>
     </div>
@@ -64,8 +54,6 @@ function AppContent({ selectedCategory, setSelectedCategory, selectedArticle, se
             <HomeContent 
               selectedCategory={selectedCategory}
               setSelectedCategory={setSelectedCategory}
-              selectedArticle={selectedArticle}
-              setSelectedArticle={setSelectedArticle}
             />
           } 
         />

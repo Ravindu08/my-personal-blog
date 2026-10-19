@@ -138,3 +138,23 @@
 - **ගැටළුව:** Vercel එකේ Login වෙන්න හදද්දී Login නොවී නතර වීම.
 - **හේතුව:** Render එකේ දුවන පරණ Backend Version එකේ CORS Settings වල Vercel (`*.vercel.app`) Domain එක Allow කර නොතිබීම (`Disallowed CORS origin`).
 - **විසඳුම:** Render Dashboard එකට ගොස් **Manual Deploy ➡️ Deploy latest commit** ක්ලික් කර අලුත්ම කෝඩ් එක Deploy කරගත යුතුය. තවද Render Environment Variables වල `FRONTEND_URL` එකට `https://my-personal-blog-sigma.vercel.app` ලබා දිය හැක.
+
+### 15. Modern Editorial Tech Publication Redesign (Article-Centric Architecture)
+- **පරිශීලක ඉල්ලීම:** වෙබ් අඩවිය පිරිසිදු Tech Blog එකක් වන බැවින් පුද්ගලික විස්තර (CV/Portfolio) අඩු කර, Articles වලට ප්‍රමුඛත්වය ලබා දෙන ලෝකයේ නවීනතම Blog Design එකක් ක්‍රියාත්මක කිරීම (Linear, Stripe, Hashnode ආභාෂය).
+- **ප්‍රධාන වෙනස්කම් සහ අලුත් Features:**
+  1. **Personal Resume Block ඉවත් කිරීම:** මුල් පිටුවේ තිබූ විශාල "About Me" / "Download Resume" කොටස ඉවත් කර, ඒ වෙනුවට ලිපි වලට උපරිම ඉඩ ලබා දෙන ලදී. කතුවරයාගේ විස්තර ලිපි පාමුල ඉතා සරල, වෘත්තීය Micro-Badge එකක් ලෙස පමණක් පෙන්වයි.
+  2. **Editorial Hero & Spotlight Card:**
+     - "Deep Dives into Code, Systems & the Modern Web" යනුවෙන් තාක්ෂණික ප්‍රකාශනයකට ගැළපෙන Header එකක් නිර්මාණය කිරීම.
+     - Backend එකෙන් හෝ Data වලින් ඉබේම Fetch වන **Featured Story Spotlight Card** එකක් Hero එක තුළම Embed කිරීම (කවරයේ පින්තූරය, කියවීමේ කාලය, මාතෘකාව සමඟ).
+  3. **Live Real-time Search & Discovery Bar:**
+     - ලිපි නාමය, අන්තර්ගතය හෝ Tags අනුව ක්ෂණිකව Filter වන Live Search Bar එකක්.
+     - Dynamic Category Pills (`All`, `Web Dev`, ආදී).
+     - Sorting විකල්ප 3ක්: `Latest` (අලුත්ම ලිපි), `Popular` (වැඩිම Likes/Views), `Quick` (කෙටි කියවීම්).
+  4. **16:9 Aspect Modern Article Cards:**
+     - නවීන Glass Border, Hover Zoom Cover Image, Floating Category Badges.
+     - තත්පරයෙන් Update වන Like Toggle එක සහ Comment/View Counts.
+     - කාඩ්පත ක්ලික් කළ විට කෙලින්ම `/article/:slug` හරහා සම්පූර්ණ ලිපිය කියවීමට Route වීම.
+  5. **Single Article Reading Experience Upgrade:**
+     - ලිපිය කියවන විට Window එක මුදුනේ දිස්වන **Reading Scroll Progress Bar**.
+     - ලිපිය අවසානයේ කතුවරයාගේ අත්සන (Micro-Author Bio).
+     - **Related Articles ("Keep Reading More Articles")** නිර්දේශ.
