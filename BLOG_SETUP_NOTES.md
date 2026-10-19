@@ -116,4 +116,8 @@
   - Frontend එක කිසිවිටකත් Sleep වන්නේ නැත (24/7 Instant).
   - GitHub එකට `git push` කරන සෑම විටකම ස්වයංක්‍රීයව අලුත් Version එක Live වෙබ් අඩවියට Update වේ (Automatic CI/CD).
   - නොමිලේ SSL (`https://`) සහ `.vercel.app` Domain එකක් හිමි වේ (Custom Domain ද සම්බන්ධ කළ හැක).
+- **cPanel සහ Vercel අතර වෙනස (සාම්ප්‍රදායික Hosting vs Modern Cloud):**
+  - **cPanel (Traditional Shared Hosting):** Hostinger, Namecheap, GoDaddy වැනි සාම්ප්‍රදායික Hosting වල File Manager එකට `dist` හෝ `build` folder එක Zip කර manual Upload කළ යුතුය. Update කරන සෑම විටකම නැවත Build කර Upload කළ යුතුය.
+  - **Vercel (Modern Git-based Cloud):** cPanel හෝ File Manager අවශ්‍ය නැත. GitHub එකට `git push` කළ සැනින් Vercel Cloud එක විසින්ම Code එක Build කර තත්පර ගණනකින් Live කරයි (CI/CD).
+
 
