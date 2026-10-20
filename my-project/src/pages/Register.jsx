@@ -153,7 +153,7 @@ const Register = () => {
             className="text-center mb-6 md:mb-8"
           >
             <h1 className="text-3xl sm:text-4xl font-bold text-slate-800 mb-2">Create Account</h1>
-            <p className="text-sm sm:text-base text-slate-500">Join the IAS UWU Community</p>
+            <p className="text-sm sm:text-base text-slate-500">Join the Ravindu Labs Community</p>
           </motion.div>
 
           {/* Form */}
@@ -184,7 +184,7 @@ const Register = () => {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="John Doe"
-                  className="w-full pl-11 sm:pl-12 pr-4 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none transition-colors text-sm sm:text-base"
+                  className="w-full pl-11 sm:pl-12 pr-4 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none transition-colors text-sm sm:text-base text-slate-900 bg-white placeholder-slate-400 font-medium"
                 />
               </div>
             </motion.div>
@@ -204,7 +204,7 @@ const Register = () => {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="you@example.com"
-                  className="w-full pl-11 sm:pl-12 pr-4 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none transition-colors text-sm sm:text-base"
+                  className="w-full pl-11 sm:pl-12 pr-4 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none transition-colors text-sm sm:text-base text-slate-900 bg-white placeholder-slate-400 font-medium"
                 />
               </div>
             </motion.div>
@@ -224,7 +224,7 @@ const Register = () => {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className="w-full pl-11 sm:pl-12 pr-12 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none transition-colors text-sm sm:text-base"
+                  className="w-full pl-11 sm:pl-12 pr-12 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none transition-colors text-sm sm:text-base text-slate-900 bg-white placeholder-slate-400 font-medium"
                 />
                 <button
                   type="button"
@@ -252,7 +252,7 @@ const Register = () => {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   placeholder="••••••••"
-                  className="w-full pl-11 sm:pl-12 pr-12 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none transition-colors text-sm sm:text-base"
+                  className="w-full pl-11 sm:pl-12 pr-12 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none transition-colors text-sm sm:text-base text-slate-900 bg-white placeholder-slate-400 font-medium"
                 />
                 <button
                   type="button"
@@ -278,7 +278,7 @@ const Register = () => {
                   value={formData.profileImage}
                   onChange={handleChange}
                   placeholder="https://example.com/photo.jpg"
-                  className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none transition-colors text-sm sm:text-base"
+                  className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none transition-colors text-sm sm:text-base text-slate-900 bg-white placeholder-slate-400 font-medium"
                 />
                 <label className="flex items-center justify-center px-4 py-3 border-2 border-dashed border-slate-300 rounded-lg bg-slate-50 hover:bg-slate-100 cursor-pointer text-sm font-semibold text-slate-700">
                   <input

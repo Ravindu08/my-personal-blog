@@ -159,7 +159,7 @@ const ArticleSubmissionForm = () => {
                 value={formData.title}
                 onChange={handleChange}
                 placeholder="Enter article title"
-                className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none transition-colors"
+                className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none transition-colors text-slate-900 bg-white placeholder-slate-400 font-medium"
                 required
               />
             </div>
@@ -173,7 +173,7 @@ const ArticleSubmissionForm = () => {
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none transition-colors"
+                className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none transition-colors text-slate-900 bg-white font-medium"
                 required
               >
                 <option value="">Select a category</option>
@@ -194,7 +194,7 @@ const ArticleSubmissionForm = () => {
                 value={formData.tags}
                 onChange={handleChange}
                 placeholder="e.g., AI, Machine Learning, Python"
-                className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none transition-colors"
+                className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none transition-colors text-slate-900 bg-white placeholder-slate-400 font-medium"
               />
             </div>
 
@@ -210,7 +210,7 @@ const ArticleSubmissionForm = () => {
                   value={formData.featuredImage}
                   onChange={handleChange}
                   placeholder="https://example.com/image.jpg"
-                  className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none transition-colors"
+                  className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none transition-colors text-slate-900 bg-white placeholder-slate-400 font-medium"
                 />
                 <label className="flex items-center justify-center px-4 py-3 border-2 border-dashed border-slate-300 rounded-lg bg-slate-50 hover:bg-slate-100 cursor-pointer text-sm font-semibold text-slate-700">
                   <input
@@ -242,7 +242,7 @@ const ArticleSubmissionForm = () => {
                 onChange={handleChange}
                 placeholder="Brief summary of your article (2-3 sentences)"
                 rows={3}
-                className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none transition-colors resize-none"
+                className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none transition-colors resize-none text-slate-900 bg-white placeholder-slate-400 font-medium"
               />
             </div>
 

@@ -90,7 +90,7 @@ const Login = () => {
             className="text-center mb-6 md:mb-8"
           >
             <h1 className="text-3xl sm:text-4xl font-bold text-slate-800 mb-2">Welcome Back</h1>
-            <p className="text-sm sm:text-base text-slate-500">Login to your IAS UWU Account</p>
+            <p className="text-sm sm:text-base text-slate-500">Login to your Ravindu Labs Account</p>
           </motion.div>
 
           {/* Form */}
@@ -120,7 +120,7 @@ const Login = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="w-full pl-11 sm:pl-12 pr-4 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none transition-colors text-sm sm:text-base"
+                  className="w-full pl-11 sm:pl-12 pr-4 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none transition-colors text-sm sm:text-base text-slate-900 bg-white placeholder-slate-400 font-medium"
                 />
               </div>
             </motion.div>
@@ -139,7 +139,7 @@ const Login = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-11 sm:pl-12 pr-12 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none transition-colors text-sm sm:text-base"
+                  className="w-full pl-11 sm:pl-12 pr-12 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none transition-colors text-sm sm:text-base text-slate-900 bg-white placeholder-slate-400 font-medium"
                 />
                 <button
                   type="button"
