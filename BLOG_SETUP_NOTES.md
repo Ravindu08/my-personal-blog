@@ -184,4 +184,13 @@
   - `AdminDashboard.jsx` - Admin සඳහා Create Article Modal.
   - `SingleArticle.jsx` & `ArticleModal.jsx` - ලිපි කියවන පිටු සහ Modal.
 
+### 18. Form Input Text Contrast & Color Inherit Fix (Create Account / Login / Submissions)
+- **ගැටළුව:** Create Account පිටුවේ (සහ Login / Article Submission වල) Type කරද්දී ලියන අකුරු නොපෙනී යාම හෝ පැහැදිලි නොවීම.
+- **හේතුව:** Global Dark Theme එක නිසා `body` එකට `color: #f1f5f9` (White text) ලබා දී තිබීම. Tailwind v4 හි සියලුම `input`, `textarea`, `select` elements default ලෙස `color: inherit` ගන්නා බැවින්, White Card Container එකක් ඇතුළත Input එකක ලියන විට සුදු පාට අකුරු සුදු පාට පසුබිම මත වැටීම (White-on-White).
+- **විසඳුම:**
+  1. `index.css` හි Form inputs සඳහා Global CSS Rule එකක් එක් කළා (`input, textarea, select { color: #0f172a; }`). එමෙන්ම dark container input සඳහා පමණක් light text ක්‍රියාත්මක කළා.
+  2. `Register.jsx`, `Login.jsx` සහ `ArticleSubmission.jsx` හි input fields සියල්ලටම explicit ලෙස `text-slate-900 bg-white placeholder-slate-400 font-medium` styling එකතු කළා.
+  3. Register සහ Login පිටුවල තිබූ පැරණි "Join the IAS UWU Community" පාඨය "Join the Ravindu Labs Community" ලෙස නිවැරදි කළා.
+
+
 
