@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import api, { uploadAPI } from '../services/api';
+import RichTextEditor from '../components/RichTextEditor';
 
 const categories = [
   'Technology',
@@ -245,19 +246,13 @@ const ArticleSubmissionForm = () => {
               />
             </div>
 
-            {/* Content */}
+            {/* Content (Rich Text Editor) */}
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-2">
-                Article Content <span className="text-red-500">*</span>
-              </label>
-              <textarea
-                name="content"
+              <RichTextEditor
                 value={formData.content}
-                onChange={handleChange}
-                placeholder="Write your article content here..."
-                rows={12}
-                className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none transition-colors resize-none"
-                required
+                onChange={(html) => setFormData((prev) => ({ ...prev, content: html }))}
+                placeholder="Write your article content here with formatting, headings, highlights, and underlines..."
+                required={true}
               />
             </div>
 

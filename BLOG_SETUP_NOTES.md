@@ -159,13 +159,29 @@
      - ලිපිය අවසානයේ කතුවරයාගේ අත්සන (Micro-Author Bio).
      - **Related Articles ("Keep Reading More Articles")** නිර්දේශ.
 
-### 16. Online Images & Production Asset Resolution Fix
-- **ගැටළුව:** Online Mode (Vercel) එකේදී ලිපි වල පින්තූර නොපෙනී යාම (Broken / Missing Images).
-- **හේතු:**
-  1. **Localhost Links:** MongoDB Database එකේ FeaturedImage සහ AuthorImage ලින්ක්ස් save වී තිබුණේ `http://127.0.0.1:8000/uploads/...` (Localhost) ලෙසයි. පිටතින් එන අයට Localhost Load කළ නොහැකි අතර HTTPS සයිට් වලදී Mixed Content ලෙස Browser එක විසින් ඒවා Block කරයි.
-  2. **Gitignore:** Backend එකේ `uploads/` ෆෝල්ඩරය `.gitignore` කර තිබූ නිසා Render එකට එම Image Files upload වී නොතිබුණි.
-- **විසඳුම:**
-  1. `my-project/public/uploads/` නමින් Frontend එක තුළම Image Assets ස්ථාපිත කළා. එමඟින් Vercel Global Edge CDN හරහා පින්තූර 100% ක්ම Online වේගයෙන් Load වේ.
-  2. MongoDB Atlas Database එකේ තිබූ image links සියල්ල `/uploads/...` ලෙස Relative Clean Path වලට Update කළා.
-  3. `imageUtils.js` මඟින් Frontend එකේදී සියලුම Image URLs ස්වයංක්‍රීයව Normalize කර, කිසියම් පින්තූරයක් Load වීමට අපොහොසත් වුවහොත් Category එකට අදාළ HD Cover එකකට Fallback වන පරිදි Error Handling එකතු කළා.
+### 17. Rich Text Authoring Suite & Typography Engine (Highlight, Underline, Letter Sizes, Bold)
+- **පරිශීලක ඉල්ලීම:** ලිපි ලියන විට Plain Text වෙනුවට Text Highlight කිරීම, Bold කිරීම, Titles / Headings Underline කිරීම සහ Letter/Font Sizes (Heading 1, 2, 3, Lead, Small) වෙනස් කිරීමට හැකියාව ලබා දීම.
+- **නිර්මාණය කළ සංරචක (Components):**
+  1. `RichTextEditor.jsx` (`my-project/src/components/RichTextEditor.jsx`):
+     - **Font / Heading Sizes:** Paragraph (Normal 16px), Title / Heading 1 (32px Bold), Section / Heading 2 (24px Bold), Subtitle / Heading 3 (20px Semibold), Lead (18px), Small Caption (13px).
+     - **Bold (`<b>` / `Ctrl+B`):** ප්‍රධාන කරුණු අවධාරණය කිරීමට.
+     - **Underline (`<u>` / `Ctrl+U`):** මාතෘකා සහ වැදගත් කොටස් Underline කිරීමට (Cyan Accent `#00A39C` Underline Offset සහිතව).
+     - **Highlight Engine (`<mark>` / `Ctrl+H`):** විවිධ Neon වර්ණ 5කින් Text Highlight කිරීමේ හැකියාව (Teal Mint, Sunshine Yellow, Electric Purple, Coral Rose, Emerald Green).
+     - **අමතර Modern Tools:** Italic (`<i>`), Strikethrough (`<s>`), Bulleted & Numbered Lists (`<ul>`, `<ol>`), Blockquotes (`<blockquote>`), Code Blocks (`<pre><code>`), Hyperlink Dialog (`<a>`), Horizontal Rule (`<hr>`), Clean Format Eraser.
+     - **Triple Mode Navigation:**
+       - **Visual (WYSIWYG) Mode:** ලිපිය ලියන ගමන්ම Formatting සජීවීව දැකගත හැක.
+       - **HTML Code Mode:** Raw HTML tags කෙලින්ම සංස්කරණය කිරීමට කැමති අයට.
+       - **Live Preview Mode:** Reader View එකේදී ලිපිය දිස්වන ආකාරය Dark Theme එකෙන් ක්ෂණිකව සජීවීව බලාගත හැක.
+     - **Live Writing Stats:** Word Count, Character Count සහ Estimated Reading Time සජීවීව ගණනය වේ.
+  2. `ArticleContentRenderer.jsx` (`my-project/src/components/ArticleContentRenderer.jsx`):
+     - HTML Tags අඩංගු අලුත් ලිපි ආරක්ෂිතව සහ ඉතාමත් ලස්සන Typography එකකින් Render කරයි.
+     - මීට පෙර ලියන ලද පැරණි Plain Text ලිපි බිඳ නොවැටී Clean Paragraphs බවට පත්කර පෙන්වයි (Backward Compatibility).
+  3. **Custom Typography CSS (`index.css`):**
+     - Headings, Underlines (`u`, `h1 u`, `h2 u`), `<mark>` Highlight Variants, Blockquotes, Code blocks සඳහා Modern Dark & Light CSS Styling එක් කරන ලදී.
+- **ඒකාබද්ධ කළ ස්ථාන (Integrated Pages):**
+  - `ArticleSubmission.jsx` - නව ලිපි Submit කරන ප්‍රධාන පිටුව.
+  - `Dashboard.jsx` - Writers සඳහා Create Article Tab සහ Edit Article Modal.
+  - `AdminDashboard.jsx` - Admin සඳහා Create Article Modal.
+  - `SingleArticle.jsx` & `ArticleModal.jsx` - ලිපි කියවන පිටු සහ Modal.
+
 

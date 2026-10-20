@@ -1,15 +1,12 @@
 /* src/index.css */
 @import "tailwindcss";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 /* --- Custom Global Styles for a Premium Look --- */
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f8fafc; /* A clean, light gray background */
-  color: #334155; /* A soft, dark gray for text */
+  background-color: #030712; /* Deep modern dark slate */
+  color: #f1f5f9;
   overflow-x: hidden;
 }
 
@@ -18,47 +15,301 @@ body {
   overflow-x: hidden;
 }
 
-/* Custom styling for the single article content (prose) in the modal */
-.prose h2 { @apply text-3xl font-bold text-slate-800 mt-12 mb-4 border-b border-gray-200 pb-2; }
-.prose p { @apply text-lg text-slate-600 leading-relaxed mb-6; }
-.prose ul { @apply list-disc list-inside space-y-2 mb-6 pl-4 text-slate-600; }
-.prose a { @apply text-[#00A39C] hover:underline transition-colors; }
-.prose strong { @apply text-slate-800; }/* src/index.css */
-@import "tailwindcss";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* ========================================================
+   Rich Text Editor & Article Typography System
+   ======================================================== */
 
-/* --- Custom Global Styles for a Premium Look --- */
-body {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #f8fafc; /* A clean, light gray background */
-  color: #334155; /* A soft, dark gray for text */
+/* ContentEditable Area inside the RichTextEditor */
+.article-editor-editable {
+  min-height: 320px;
+  outline: none;
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.75;
+  color: #1e293b;
 }
 
-/* Custom styling for the single article content (prose) in the modal */
-.prose h2 { @apply text-3xl font-bold text-slate-800 mt-12 mb-4 border-b border-gray-200 pb-2; }
-.prose p { @apply text-lg text-slate-600 leading-relaxed mb-6; }
-.prose ul { @apply list-disc list-inside space-y-2 mb-6 pl-4 text-slate-600; }
-.prose a { @apply text-[#00A39C] hover:underline transition-colors; }
-.prose strong { @apply text-slate-800; }/* src/index.css */
-@import "tailwindcss";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* --- Custom Global Styles for a Premium Look --- */
-body {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #f8fafc; /* A clean, light gray background */
-  color: #334155; /* A soft, dark gray for text */
+.article-editor-editable:empty:before {
+  content: attr(data-placeholder);
+  color: #94a3b8;
+  pointer-events: none;
+  display: block;
 }
 
-/* Custom styling for the single article content (prose) in the modal */
-.prose h2 { @apply text-3xl font-bold text-slate-800 mt-12 mb-4 border-b border-gray-200 pb-2; }
-.prose p { @apply text-lg text-slate-600 leading-relaxed mb-6; }
-.prose ul { @apply list-disc list-inside space-y-2 mb-6 pl-4 text-slate-600; }
-.prose a { @apply text-[#00A39C] hover:underline transition-colors; }
-.prose strong { @apply text-slate-800; }
+.article-editor-editable h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.25;
+}
+
+.article-editor-editable h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.35;
+}
+
+.article-editor-editable h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.article-editor-editable p {
+  margin-bottom: 0.85rem;
+}
+
+.article-editor-editable blockquote {
+  border-left: 4px solid #00A39C;
+  padding: 0.5rem 1rem;
+  margin: 1rem 0;
+  color: #475569;
+  background-color: #f0fdfa;
+  border-radius: 0 0.5rem 0.5rem 0;
+  font-style: italic;
+}
+
+.article-editor-editable ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.article-editor-editable ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+/* ========================================================
+   Underlines and Highlights (Core User Feature Request)
+   ======================================================== */
+
+/* Underlines on titles and body text */
+u, .article-underline {
+  text-decoration: underline;
+  text-decoration-color: #00A39C;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 2px;
+}
+
+h1 u, h2 u, h3 u {
+  text-decoration-thickness: 3px;
+  text-underline-offset: 6px;
+  text-decoration-color: #14b8a6;
+}
+
+/* Default Mark / Highlight */
+mark {
+  background-color: rgba(20, 184, 166, 0.25);
+  color: #5eead4;
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.25rem;
+  border-bottom: 2px solid #14b8a6;
+  font-weight: 500;
+}
+
+/* Specific Highlight Color Variants */
+mark.hl-teal, .hl-teal {
+  background-color: rgba(20, 184, 166, 0.25) !important;
+  color: #5eead4 !important;
+  border-bottom: 2px solid #14b8a6 !important;
+}
+
+mark.hl-yellow, .hl-yellow {
+  background-color: rgba(234, 179, 8, 0.28) !important;
+  color: #fde047 !important;
+  border-bottom: 2px solid #eab308 !important;
+}
+
+mark.hl-purple, .hl-purple {
+  background-color: rgba(168, 85, 247, 0.25) !important;
+  color: #d8b4fe !important;
+  border-bottom: 2px solid #a855f7 !important;
+}
+
+mark.hl-rose, .hl-rose {
+  background-color: rgba(244, 63, 94, 0.25) !important;
+  color: #fda4af !important;
+  border-bottom: 2px solid #f43f5e !important;
+}
+
+mark.hl-emerald, .hl-emerald {
+  background-color: rgba(16, 185, 129, 0.25) !important;
+  color: #6ee7b7 !important;
+  border-bottom: 2px solid #10b981 !important;
+}
+
+/* In light containers (like editor or light modal) */
+.article-editor-editable mark,
+.article-rendered-light mark {
+  color: #0f172a !important;
+}
+.article-editor-editable mark.hl-yellow,
+.article-rendered-light mark.hl-yellow {
+  background-color: #fef08a !important;
+  color: #713f12 !important;
+}
+.article-editor-editable mark.hl-teal,
+.article-rendered-light mark.hl-teal {
+  background-color: #ccfbf1 !important;
+  color: #115e59 !important;
+}
+.article-editor-editable mark.hl-purple,
+.article-rendered-light mark.hl-purple {
+  background-color: #f3e8ff !important;
+  color: #581c87 !important;
+}
+.article-editor-editable mark.hl-rose,
+.article-rendered-light mark.hl-rose {
+  background-color: #ffe4e6 !important;
+  color: #881337 !important;
+}
+.article-editor-editable mark.hl-emerald,
+.article-rendered-light mark.hl-emerald {
+  background-color: #d1fae5 !important;
+  color: #065f46 !important;
+}
+
+/* ========================================================
+   Rendered Article Typography (Dark Reader Theme)
+   ======================================================== */
+.article-rendered-content h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  line-height: 1.25;
+  margin-top: 2.25rem;
+  margin-bottom: 1rem;
+  color: #ffffff;
+  letter-spacing: -0.025em;
+}
+
+.article-rendered-content h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.35;
+  margin-top: 2rem;
+  margin-bottom: 0.85rem;
+  color: #f8fafc;
+  letter-spacing: -0.015em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 0.5rem;
+}
+
+.article-rendered-content h3 {
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-top: 1.75rem;
+  margin-bottom: 0.6rem;
+  color: #e2e8f0;
+}
+
+.article-rendered-content p {
+  margin-bottom: 1.35rem;
+  line-height: 1.85;
+  font-size: 1.0625rem;
+  color: #cbd5e1;
+}
+
+.article-rendered-content strong,
+.article-rendered-content b {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.article-rendered-content em,
+.article-rendered-content i {
+  color: #e2e8f0;
+  font-style: italic;
+}
+
+.article-rendered-content blockquote {
+  border-left: 4px solid #00A39C;
+  background: rgba(0, 163, 156, 0.07);
+  padding: 1rem 1.25rem;
+  margin: 1.75rem 0;
+  border-radius: 0 0.75rem 0.75rem 0;
+  font-style: italic;
+  color: #94a3b8;
+}
+
+.article-rendered-content ul {
+  list-style-type: disc;
+  padding-left: 1.75rem;
+  margin-bottom: 1.35rem;
+  color: #cbd5e1;
+}
+
+.article-rendered-content ol {
+  list-style-type: decimal;
+  padding-left: 1.75rem;
+  margin-bottom: 1.35rem;
+  color: #cbd5e1;
+}
+
+.article-rendered-content li {
+  margin-bottom: 0.5rem;
+  line-height: 1.75;
+}
+
+.article-rendered-content pre {
+  background-color: #0b1120;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  margin: 1.75rem 0;
+}
+
+.article-rendered-content code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.88em;
+  background: rgba(255, 255, 255, 0.08);
+  color: #38bdf8;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+}
+
+.article-rendered-content pre code {
+  background: transparent;
+  padding: 0;
+  color: #38bdf8;
+}
+
+.article-rendered-content hr {
+  border: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+  margin: 2.25rem 0;
+}
+
+.article-rendered-content a {
+  color: #2dd4bf;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.article-rendered-content a:hover {
+  color: #5eead4;
+}
+
+/* Light container overrides */
+.article-rendered-light h1 { color: #0f172a; }
+.article-rendered-light h2 { color: #1e293b; border-bottom-color: #e2e8f0; }
+.article-rendered-light h3 { color: #334155; }
+.article-rendered-light p { color: #334155; }
+.article-rendered-light strong, .article-rendered-light b { color: #0f172a; }
+.article-rendered-light ul, .article-rendered-light ol { color: #334155; }
+.article-rendered-light blockquote { background: #f0fdfa; color: #475569; }
+.article-rendered-light a { color: #0f766e; }

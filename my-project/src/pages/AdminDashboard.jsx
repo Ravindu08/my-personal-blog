@@ -7,6 +7,7 @@ import ConfirmModal from '../components/ConfirmModal';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import api, { adminAPI, uploadAPI } from '../services/api';
+import RichTextEditor from '../components/RichTextEditor';
 
 const AdminDashboard = () => {
   // Predefined categories for the combobox
@@ -1408,15 +1409,12 @@ const AdminDashboard = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Article Content *</label>
-                  <textarea
+                  <RichTextEditor
                     value={newArticle.content}
-                    onChange={(e) => setNewArticle({ ...newArticle, content: e.target.value })}
-                    placeholder="Write your article content here..."
-                    rows="8"
-                    className="w-full px-4 py-2 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none"
-                    required
-                  ></textarea>
+                    onChange={(html) => setNewArticle({ ...newArticle, content: html })}
+                    placeholder="Write your article content here with formatting, headings, highlights, and underlines..."
+                    required={true}
+                  />
                 </div>
 
                 <div className="flex gap-3 pt-4">

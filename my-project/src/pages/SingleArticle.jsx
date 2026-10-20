@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { FaHeart, FaRegHeart, FaEye, FaComment, FaShare, FaCheck, FaArrowLeft, FaClock, FaCalendarAlt, FaTwitter, FaLinkedin, FaGithub } from 'react-icons/fa';
 import api, { API_URL, engagementAPI, commentsAPI } from '../services/api';
 import ArticleCard from '../components/ArticleCard';
+import ArticleContentRenderer from '../components/ArticleContentRenderer';
 import { getValidImageUrl, handleImageError } from '../utils/imageUtils';
 
 const SingleArticle = () => {
@@ -298,10 +299,10 @@ const SingleArticle = () => {
           </div>
         )}
 
-        {/* Article Full Content */}
-        <article className="prose prose-invert prose-slate lg:prose-lg max-w-none text-slate-200 leading-relaxed font-light whitespace-pre-wrap mb-12">
-          {article.content}
-        </article>
+        {/* Article Full Content (Rich HTML & Styled Typography) */}
+        <div className="mb-14">
+          <ArticleContentRenderer content={article.content} />
+        </div>
 
         {/* Tags */}
         {article.tags && article.tags.length > 0 && (

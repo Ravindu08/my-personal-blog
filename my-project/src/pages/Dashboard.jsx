@@ -17,6 +17,7 @@ import ConfirmModal from '../components/ConfirmModal';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import api, { commentsAPI, profileAPI, uploadAPI } from '../services/api';
+import RichTextEditor from '../components/RichTextEditor';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -900,16 +901,12 @@ const Dashboard = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-2">Article Content *</label>
-            <textarea 
-              name="content"
+            <RichTextEditor
               value={newArticle.content}
-              onChange={handleArticleInputChange}
-              placeholder="Write your article content here..." 
-              rows="10" 
-              className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none"
-              required
-            ></textarea>
+              onChange={(html) => setNewArticle(prev => ({ ...prev, content: html }))}
+              placeholder="Write your article content here with formatting, headings, highlights, and underlines..."
+              required={true}
+            />
           </div>
 
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
@@ -1083,13 +1080,11 @@ const Dashboard = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Content *</label>
-                <textarea
-                  rows="8"
+                <RichTextEditor
                   value={editingArticle.content}
-                  onChange={(e) => setEditingArticle({ ...editingArticle, content: e.target.value })}
-                  className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none"
-                  required
+                  onChange={(html) => setEditingArticle(prev => ({ ...prev, content: html }))}
+                  placeholder="Edit your article content here..."
+                  required={true}
                 />
               </div>
 

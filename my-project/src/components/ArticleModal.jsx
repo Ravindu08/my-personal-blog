@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaTimes } from 'react-icons/fa';
 import { commentsAPI } from '../services/api';
+import ArticleContentRenderer from './ArticleContentRenderer';
 
 const backdropVariants = { hidden: { opacity: 0 }, visible: { opacity: 1 } };
 const modalVariants = {
@@ -82,32 +83,9 @@ const ArticleModal = ({ article, onClose }) => {
             <p className="text-gray-500">By <strong>{authorName}</strong> • Published on {article.date || (article.createdAt ? new Date(article.createdAt).toLocaleDateString() : 'Recently')}</p>
           </div>
 
-          {/* Split content into 3-5 paragraphs for better readability */}
-          <div className="prose lg:prose-xl max-w-none">
-            {(() => {
-              // Remove HTML tags and split by double newlines or periods for paragraphing
-              let rawContent = article.content || '';
-              // If content is HTML, strip tags for splitting, but keep original for rendering
-              const tempDiv = document.createElement('div');
-              tempDiv.innerHTML = rawContent;
-              const textContent = tempDiv.textContent || tempDiv.innerText || '';
-              // Try to split by double newlines, else by period
-              let paragraphs = textContent.split(/\n\n|\r\n\r\n|(?<=\.)\s{1,}/g).filter(p => p.trim().length > 0);
-              // If too few paragraphs, split every ~N sentences
-              if (paragraphs.length < 3) {
-                paragraphs = textContent.match(/[^.!?]+[.!?]+/g) || [textContent];
-                const chunkSize = Math.ceil(paragraphs.length / 4);
-                let grouped = [];
-                for (let i = 0; i < paragraphs.length; i += chunkSize) {
-                  grouped.push(paragraphs.slice(i, i + chunkSize).join(' '));
-                }
-                paragraphs = grouped;
-              }
-              // Show all paragraphs for full detail
-              return paragraphs.map((p, i) => (
-                <p key={i}>{p.trim()}</p>
-              ));
-            })()}
+          {/* Article Full Content (Rich formatting support) */}
+          <div className="py-2 mb-6">
+            <ArticleContentRenderer content={article.content} isLight={true} />
           </div>
 
           <div className="mt-12 border-t border-slate-200 pt-8">
