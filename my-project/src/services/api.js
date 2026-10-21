@@ -43,6 +43,54 @@ const getGuestLikeId = () => {
   return id;
 };
 
+// Ping backend to warm up free tier instance
+export const pingBackend = () => {
+  try {
+    api.get('/health', { timeout: 8000 }).catch(() => {});
+  } catch (e) {}
+};
+
+// In-flight request deduplication and caching for approved articles
+let pendingArticlesPromise = null;
+let articlesCache = null;
+let articlesCacheTime = 0;
+
+export const fetchApprovedArticles = async (forceRefresh = false) => {
+  const now = Date.now();
+  if (!forceRefresh && articlesCache && (now - articlesCacheTime < 60000)) {
+    return articlesCache;
+  }
+  if (pendingArticlesPromise) {
+    return pendingArticlesPromise;
+  }
+  pendingArticlesPromise = api.get('/articles/', {
+    params: { status: 'approved', limit: 100 }
+  })
+    .then((res) => {
+      const items = res.data?.items || [];
+      if (items.length > 0) {
+        articlesCache = items;
+        articlesCacheTime = Date.now();
+        try {
+          localStorage.setItem('ravindu_labs_cached_articles', JSON.stringify(items));
+        } catch (e) {}
+      }
+      return items;
+    })
+    .catch((err) => {
+      // If error but we have cache, return cache
+      if (articlesCache && articlesCache.length > 0) {
+        return articlesCache;
+      }
+      throw err;
+    })
+    .finally(() => {
+      pendingArticlesPromise = null;
+    });
+
+  return pendingArticlesPromise;
+};
+
 // Image upload helper
 export const uploadAPI = {
   uploadImage: async (file) => {

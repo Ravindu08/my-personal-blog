@@ -16,27 +16,26 @@ const ArticleCard = ({ article, index }) => {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    const fetchCounts = async () => {
-      try {
-        const stats = await engagementAPI.getStats(article.slug);
-        if (stats?.viewCount !== undefined) setViewCount(stats.viewCount);
-        if (stats?.likesCount !== undefined) setLikesCount(stats.likesCount);
-      } catch (err) {
-        // silent fallback
-      }
+    let isMounted = true;
+    // Set counts from article props immediately
+    setViewCount(article.viewCount || 0);
+    setLikesCount(article.likesCount || 0);
+    setCommentsCount(article.commentsCount ?? (Array.isArray(article.comments) ? article.comments.length : 0));
 
-      try {
-        const articleId = article.id || article._id;
-        if (!articleId) return;
-        const list = await commentsAPI.getArticleComments(articleId);
-        setCommentsCount(Array.isArray(list) ? list.length : 0);
-      } catch (err) {
-        // silent fallback
-      }
-    };
+    // Only fetch fresh engagement stats if not provided in props
+    if (article.viewCount === undefined || article.likesCount === undefined) {
+      engagementAPI.getStats(article.slug)
+        .then((stats) => {
+          if (isMounted && stats) {
+            if (stats.viewCount !== undefined) setViewCount(stats.viewCount);
+            if (stats.likesCount !== undefined) setLikesCount(stats.likesCount);
+          }
+        })
+        .catch(() => {});
+    }
 
-    fetchCounts();
-  }, [article]);
+    return () => { isMounted = false; };
+  }, [article.slug, article.id, article._id, article.viewCount, article.likesCount, article.commentsCount]);
 
   const handleLikeClick = async (e) => {
     e.stopPropagation();

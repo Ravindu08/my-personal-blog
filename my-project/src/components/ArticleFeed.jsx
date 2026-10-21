@@ -3,37 +3,62 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaSearch, FaTimes, FaFilter, FaFire, FaClock, FaCalendarAlt, FaLayerGroup } from 'react-icons/fa';
 import ArticleCard from './ArticleCard';
-import api from '../services/api';
+import api, { fetchApprovedArticles } from '../services/api';
 import { articlesData } from '../data';
 
 const ArticleFeed = ({ selectedCategory, setSelectedCategory }) => {
-  const [articles, setArticles] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [articles, setArticles] = useState(() => {
+    try {
+      const cached = localStorage.getItem('ravindu_labs_cached_articles');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+    return articlesData || [];
+  });
+
+  const [loading, setLoading] = useState(() => {
+    try {
+      const cached = localStorage.getItem('ravindu_labs_cached_articles');
+      if (cached && JSON.parse(cached)?.length > 0) return false;
+    } catch (e) {}
+    return (articlesData && articlesData.length > 0) ? false : true;
+  });
+
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('latest'); // 'latest' | 'popular' | 'quick'
 
-  // Fetch approved articles from API with fallback to local mock data
+  // Fetch approved articles from API with instant cache and background revalidation
   useEffect(() => {
-    const fetchArticles = async () => {
+    let isMounted = true;
+    const loadArticles = async () => {
       try {
-        setLoading(true);
-        const response = await api.get('/articles/', {
-          params: { status: 'approved', limit: 100 }
-        });
-        if (response.data?.items?.length > 0) {
-          setArticles(response.data.items);
-        } else {
-          setArticles(articlesData || []);
+        if (articles.length === 0) {
+          setLoading(true);
+        }
+        const items = await fetchApprovedArticles();
+        if (isMounted) {
+          if (items && items.length > 0) {
+            setArticles(items);
+          } else if (articles.length === 0) {
+            setArticles(articlesData || []);
+          }
         }
       } catch (err) {
-        console.warn('API unavailable, using cached/sample articles:', err);
-        setArticles(articlesData || []);
+        console.warn('API unavailable, keeping current/cached articles:', err);
+        if (isMounted && articles.length === 0) {
+          setArticles(articlesData || []);
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
-    fetchArticles();
+    loadArticles();
+    return () => { isMounted = false; };
   }, []);
 
   // Extract unique categories from articles

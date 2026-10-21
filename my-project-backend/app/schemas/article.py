@@ -44,6 +44,7 @@ class ArticleOut(BaseModel):
     updatedAt: datetime = Field(alias="updated_at")
     likesCount: int = 0
     viewCount: int = 0
+    commentsCount: int = 0
     likes: List[str] = []  # List of IP/identifier of who liked
 
     class Config:

@@ -257,6 +257,27 @@ async def list_articles(
     cursor = COLLECTION().find(filt).skip(skip).limit(limit).sort("created_at", -1)
     items = [serialize(doc) async for doc in cursor]
     items = await enrich_articles_with_author_profile(items, db)
+
+    # Attach commentsCount in a single aggregation query (prevents N+1 requests on frontend)
+    article_ids = [str(doc["_id"]) for doc in items if doc.get("_id")]
+    if article_ids:
+        try:
+            pipeline = [
+                {"$match": {"article_id": {"$in": article_ids}}},
+                {"$group": {"_id": "$article_id", "count": {"$sum": 1}}}
+            ]
+            agg = await db[settings.comments_collection].aggregate(pipeline).to_list(length=len(article_ids))
+            counts_map = {item["_id"]: item["count"] for item in agg}
+            for doc in items:
+                doc["commentsCount"] = counts_map.get(str(doc.get("_id")), 0)
+        except Exception as e:
+            logger.warning(f"Failed to aggregate comments count: {e}")
+            for doc in items:
+                doc.setdefault("commentsCount", 0)
+    else:
+        for doc in items:
+            doc.setdefault("commentsCount", 0)
+
     for item in items:
         item["featuredImage"] = normalize_featured_image_url(item.get("featuredImage"), request)
     return {"items": items, "count": len(items)}
@@ -271,6 +292,14 @@ async def get_article(slug: str, request: Request):
     serialized = serialize(doc)
     enriched = await enrich_articles_with_author_profile([serialized], db)
     item = enriched[0] if enriched else serialized
+
+    # Attach commentsCount
+    try:
+        c_count = await db[settings.comments_collection].count_documents({"article_id": str(item.get("_id"))})
+        item["commentsCount"] = c_count
+    except Exception:
+        item.setdefault("commentsCount", 0)
+
     item["featuredImage"] = normalize_featured_image_url(item.get("featuredImage"), request)
     return item
 

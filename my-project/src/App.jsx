@@ -18,6 +18,7 @@ import TermsAndConditions from './pages/TermsAndConditions';
 import ArticleSubmission from './pages/ArticleSubmission';
 import SingleArticle from './pages/SingleArticle';
 import Articles from './pages/Articles';
+import { pingBackend } from './services/api';
 
 function HomeContent({ selectedCategory, setSelectedCategory }) {
   return (
@@ -39,6 +40,11 @@ function AppContent({ selectedCategory, setSelectedCategory, selectedArticle, se
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
   const isDashboard = location.pathname === '/dashboard';
   const isAdminDashboard = location.pathname === '/admin';
+
+  // Wake up cold backend early on initial application load
+  useEffect(() => {
+    pingBackend();
+  }, []);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });

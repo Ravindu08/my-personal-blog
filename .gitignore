@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+
+# Environment Secrets
+.env
+.env.local
+.env.*.local
+
+# Production Builds
+dist/
+build/
+
+# Local Uploads & Temporary Media
+my-project-backend/uploads/
+*.log
+
+# Personal Local Notes & Practice (Local only)
+React_Learn.md
+react-practice/
+Running commands.txt
+
+# OS & Editor Files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

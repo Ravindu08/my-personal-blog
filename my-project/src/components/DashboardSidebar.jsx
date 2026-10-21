@@ -38,17 +38,17 @@ const DashboardSidebar = ({ activeTab, setActiveTab }) => {
       {/* Mobile Hamburger */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="fixed top-24 left-4 z-40 bg-[#00A39C] text-white p-2 rounded-lg md:hidden"
+        className="fixed top-4 left-4 z-40 bg-[#00A39C] text-white p-2 rounded-lg md:hidden shadow-md"
       >
         {sidebarOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
       </button>
 
       {/* Sidebar */}
         {/* Mobile Header with Back Button */}
-        <div className="fixed top-24 right-4 z-40 flex gap-2 md:hidden">
+        <div className="fixed top-4 right-4 z-40 flex gap-2 md:hidden">
           <button
             onClick={() => navigate('/')}
-            className="bg-slate-700 text-white p-2 rounded-lg hover:bg-[#00A39C] transition-colors"
+            className="bg-slate-700 text-white p-2 rounded-lg hover:bg-[#00A39C] transition-colors shadow-md"
             title="Back to Home"
           >
             <FaArrowLeft size={20} />

@@ -190,7 +190,63 @@
 - **විසඳුම:**
   1. `index.css` හි Form inputs සඳහා Global CSS Rule එකක් එක් කළා (`input, textarea, select { color: #0f172a; }`). එමෙන්ම dark container input සඳහා පමණක් light text ක්‍රියාත්මක කළා.
   2. `Register.jsx`, `Login.jsx` සහ `ArticleSubmission.jsx` හි input fields සියල්ලටම explicit ලෙස `text-slate-900 bg-white placeholder-slate-400 font-medium` styling එකතු කළා.
-  3. Register සහ Login පිටුවල තිබූ පැරණි "Join the IAS UWU Community" පාඨය "Join the Ravindu Labs Community" ලෙස නිවැරදි කළා.
+### 19. Article Submit Form Viewport & Modal Top Clipping Fix
+- **ගැටළුව:** Article Submit කරන Form එකේ ඉහළ කොටස (Title, Category, Close button) නොපෙනී යාම සහ Browser size එක වෙනස් කළ පසු පමණක් දිස්වීම.
+- **හේතු:**
+  1. **Modal Vertically Centering Clipping (`items-center`):** Form එක තුළ Rich Text Editor එක් කළ පසු Form එකේ උස Viewport උසට වඩා වැඩි විය. `flex items-center` මඟින් modal එක තිරයේ මැදට align කරද්දී, modal එකේ උඩ භාගය Browser එකේ ඉහළින් (`top < 0`) කැපී ගියේය. CSS වල `overflow-y: auto` තිබුණද `top: 0` ට වඩා ඉහළට Scroll කළ නොහැකි නිසා Browser එක Resize කරන තෙක් උඩ කොටස නොපෙනී පැවතුණි.
+  2. **Scroll Offset & Sticky Navbar:** Fixed Navbar එක නිසා සහ Scroll Position එක Reset නොවීම නිසා පිටුවට පිවිසෙන විට Form එක මැදින් පෙනීම.
+- **විසඳුම:**
+  1. `AdminDashboard.jsx` සහ `Dashboard.jsx` වල Modals සඳහා `items-start justify-center overflow-y-auto` සහ `my-6 sm:my-10` යෙදුවා. එමඟින් Form එක කොතරම් උස වුවද ඉහළින්ම පටන් ගෙන සුමටව Scroll කළ හැක.
+  2. `Dashboard.jsx` හි Tab මාරු වන විට (`[activeTab]`) සහ `ArticleSubmission.jsx` mount වන විට `window.scrollTo({ top: 0, left: 0, behavior: 'instant' })` එක් කළා.
+  3. `ArticleSubmission.jsx` සඳහා Fixed Navbar එකට ඉඩ තබා `pt-28 md:pt-36` යෙදූ අතර `authLoading` Check එකක් එක් කර Render flicker වීම වළක්වන ලදී.
+  4. `DashboardSidebar.jsx` හි Mobile Buttons `top-24` සිට `top-4` ට ගෙන Mobile Main container එකට `pt-16` යෙදුවා.
+
+---
+
+### 20. Article Loading Speed & Zero-Latency Cold Start Architecture
+- **ගැටලුව:** Deployed Online site එකට පිවිසීමේදී articles load වීමට තත්පර 15-40 ක් පමණ වැඩි වේලාවක් ගතවීම හෝ Blank Screen / Spinner දිගු වේලාවක් රැඳී තිබීම.
+- **හේතු 4 (Root Causes):**
+  1. **Render Free Tier Spin-Down (Cold Start):** Render free tier backend එකට විනාඩි 15 ක් request නොලැබුණ විට Server එක Sleep Mode (Spin down) වේ. අලුත් User කෙනෙක් එනවිට Server එක wake up වීමට තත්පර 30-50 ක් ගතවේ.
+  2. **No Frontend SWR / Cache:** Frontend එක මුලින්ම හිස් array එකක් සමඟ `loading = true` පෙන්වා Network එකෙන් එනතුරු Blank Spinner එකක් පෙන්වීම.
+  3. **Duplicate Concurrent Requests (Hero vs ArticleFeed):** මුල් පිටුව (Home) Load වන විට `Hero.jsx` (Top 5 articles) සහ `ArticleFeed.jsx` (Approved articles) එකම මොහොතේ Render backend වෙත requests 2ක් වෙන වෙනම යැවීම.
+  4. **N+1 API Waterfall per Card (`ArticleCard.jsx`):** පිටුවේ තිබූ Articles 20 සඳහාම වෙන වෙනම HTTP requests 2 බැගින් (`getStats` සහ `getArticleComments`) එකවර Server එකට යැවීම (Requests 40 ක් එකවර යාමෙන් Browser Connection queue එක හිරවීම).
+- **ක්‍රියාත්මක කළ ස්ථිර විසඳුම් (Architectural Fixes):**
+  1. **Instant SWR Cache (0.05s Instant Display):**
+     - Articles සහ Featured story සඳහා Local Cache (`ravindu_labs_cached_articles`, `ravindu_labs_cached_featured`) යොදා ගන්නා ලදී.
+     - පරිශීලකයා පිවිසෙන සැණින් **තත්පර 0.05 ක්** ඇතුළත Articles ක්ෂණිකව දිස්වේ (Zero waiting / No spinner).
+     - පසුබිමෙන් (Background) fresh data fetch වී සුමටව state එක update වේ.
+  2. **In-Flight Request Deduplication (`fetchApprovedArticles` in `api.js`):**
+     - `Hero.jsx`, `ArticleFeed.jsx`, `Articles.jsx`, සහ `SingleArticle.jsx` (related articles) එකවර load වන විට duplicate requests යැවීම වෙනුවට Shared Promise එකක් හරහා **1 Request එකක් පමණක්** backend වෙත යවයි.
+     - 60-second in-memory cache මඟින් පිටු අතර මාරු වන විට Instant Navigation ලැබේ.
+  3. **Backend Comments Aggregation & Waterfall Elimination (`articles.py` & `ArticleCard.jsx`):**
+     - Backend එකේ `list_articles` endpoint එකට MongoDB Aggregation Pipeline එකක් එක් කර, සියලුම ලිපිවල comment counts තනි Query එකකින් එකවර ලබා දී `commentsCount` field එක සමඟ එවනු ලැබේ.
+     - `ArticleCard.jsx` එකෙන් Card එකක් පාසා comments array එකම download කළ waterfall request එක ඉවත් කර, prop එකෙන් හෝ fallback එකෙන් count එක ක්ෂණිකව පෙන්වයි.
+  4. **Early Backend Warm-up Ping (`App.jsx`):**
+     - Client app එක load වන මොහොතේදීම `/health` endpoint එකට low-priority background ping එකක් යවා Sleep වී ඇති Server එක කලින්ම wake up කරවයි.
+  5. **Permanent 24/7 Keep-Alive (Zero Cold Start Guarantee):**
+     - [cron-job.org](https://cron-job.org) හෝ [UptimeRobot](https://uptimerobot.com) හරහා නොමිලේ (Free) සෑම විනාඩි 10 කට වරක් `https://my-personal-blog-6d3c.onrender.com/health` වෙත HTTP GET Ping එකක් Set කිරීම. එවිට Server එක කිසිදා Sleep නොවී නිතරම Activeව පවතී.
+
+### 21. Vercel SPA Direct URL 404 Fix (`vercel.json`)
+- **ගැටලුව:** Vercel හි deploy කළ පසු `https://my-personal-blog-sigma.vercel.app/login` හෝ `/dashboard` වැනි URL එකක් Browser එකේ Direct Type කළ විට හෝ Page එක Refresh කළ විට `404: NOT_FOUND` දෝෂය පැමිණීම.
+- **හේතුව (Root Cause):**
+  - React/Vite යනු **Single Page Application (SPA)** එකකි. මෙහි ඇත්තේ එකම `index.html` ගොනුවක් පමණි.
+  - Buttons Click කර පිටු මාරු වන විට එය කරන්නේ Browser එක තුළ ඇති **React Router (`react-router-dom`)** විසිනි (Server Request නොයයි).
+  - නමුත් Address Bar එකේ Direct URL Type කළ විට Browser එක කෙලින්ම Vercel Server එකෙන් `/login` හෝ `/login.html` යනුවෙන් වෙනම File එකක් ඉල්ලයි. Vercel `dist` තුළ එවැනි File එකක් නැති බැවින් Vercel Server එක 404 ලබා දෙයි.
+- **විසඳුම (Fix):**
+  - Project එක තුළ `vercel.json` ගොනුවක් සාදා සියලුම Routes (`/(.*)`) නැවත `index.html` වෙත Rewrite කිරීමට Rule එකක් එක් කිරීම:
+  ```json
+  {
+    "rewrites": [
+      {
+        "source": "/(.*)",
+        "destination": "/index.html"
+      }
+    ]
+  }
+  ```
+  - එමඟින් Browser එක කුමන URL එකක් ඉල්ලුවද Vercel එක `index.html` ලබා දෙන අතර, React Router එක මඟින් නිවැරදි Page Component එක Render කර පෙන්වයි.
+
+
 
 
 

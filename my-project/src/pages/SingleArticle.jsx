@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaHeart, FaRegHeart, FaEye, FaComment, FaShare, FaCheck, FaArrowLeft, FaClock, FaCalendarAlt, FaTwitter, FaLinkedin, FaGithub } from 'react-icons/fa';
-import api, { API_URL, engagementAPI, commentsAPI } from '../services/api';
+import api, { API_URL, engagementAPI, commentsAPI, fetchApprovedArticles } from '../services/api';
 import ArticleCard from '../components/ArticleCard';
 import ArticleContentRenderer from '../components/ArticleContentRenderer';
 import { getValidImageUrl, handleImageError } from '../utils/imageUtils';
@@ -12,12 +12,31 @@ const SingleArticle = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const [article, setArticle] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [article, setArticle] = useState(() => {
+    try {
+      const cached = localStorage.getItem('ravindu_labs_cached_articles');
+      if (cached) {
+        const list = JSON.parse(cached);
+        const match = list.find(a => a.slug === slug);
+        if (match) return match;
+      }
+    } catch (e) {}
+    return null;
+  });
+  const [loading, setLoading] = useState(() => {
+    try {
+      const cached = localStorage.getItem('ravindu_labs_cached_articles');
+      if (cached) {
+        const list = JSON.parse(cached);
+        if (list.find(a => a.slug === slug)) return false;
+      }
+    } catch (e) {}
+    return true;
+  });
   const [error, setError] = useState(null);
   const [liked, setLiked] = useState(false);
-  const [likesCount, setLikesCount] = useState(0);
-  const [viewCount, setViewCount] = useState(0);
+  const [likesCount, setLikesCount] = useState(() => article?.likesCount || 0);
+  const [viewCount, setViewCount] = useState(() => article?.viewCount || 0);
   const [comments, setComments] = useState([]);
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [newComment, setNewComment] = useState('');
@@ -41,15 +60,20 @@ const SingleArticle = () => {
   }, []);
 
   useEffect(() => {
+    let isMounted = true;
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     const fetchArticle = async () => {
       try {
-        setLoading(true);
+        if (!article) {
+          setLoading(true);
+        }
         const response = await api.get(`/articles/${slug}`);
-        setArticle(response.data);
-        setLikesCount(response.data.likesCount || 0);
-        setViewCount(response.data.viewCount || 0);
+        if (isMounted) {
+          setArticle(response.data);
+          setLikesCount(response.data.likesCount || 0);
+          setViewCount(response.data.viewCount || 0);
+        }
 
         // Load comments
         const articleId = response.data.id || response.data._id;
@@ -75,11 +99,11 @@ const SingleArticle = () => {
           console.error('Error recording view:', err);
         }
 
-        // Fetch related articles
+        // Fetch related articles using shared cache
         try {
-          const allRes = await api.get('/articles/', { params: { limit: 4 } });
-          const items = (allRes.data?.items || []).filter(a => a.slug !== slug).slice(0, 3);
-          setRelatedArticles(items);
+          const items = await fetchApprovedArticles();
+          const related = (items || []).filter(a => a.slug !== slug).slice(0, 3);
+          setRelatedArticles(related);
         } catch (e) {
           // ignore
         }
@@ -89,14 +113,21 @@ const SingleArticle = () => {
           document.title = `${response.data.title} | Ravindu Labs`;
         }
       } catch (err) {
-        console.error('Error fetching article:', err);
-        setError(err.response?.status === 404 ? 'Article not found' : 'Failed to load article');
+        if (isMounted) {
+          console.error('Error fetching article:', err);
+          if (!article) {
+            setError(err.response?.status === 404 ? 'Article not found' : 'Failed to load article');
+          }
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchArticle();
+    return () => { isMounted = false; };
   }, [slug]);
 
   const handleLikeClick = async () => {

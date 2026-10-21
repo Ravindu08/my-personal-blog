@@ -4,34 +4,49 @@ import { motion } from 'framer-motion';
 import { Link as ScrollLink } from 'react-scroll';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { FaGithub, FaLinkedin, FaBookOpen, FaClock, FaArrowRight, FaTerminal } from 'react-icons/fa';
-import api from '../services/api';
+import api, { fetchApprovedArticles } from '../services/api';
 import { articlesData } from '../data';
 import { getValidImageUrl, handleImageError } from '../utils/imageUtils';
 
 const Hero = () => {
   const navigate = useNavigate();
-  const [featured, setFeatured] = useState(null);
+  const [featured, setFeatured] = useState(() => {
+    try {
+      const cachedFeatured = localStorage.getItem('ravindu_labs_cached_featured');
+      if (cachedFeatured) return JSON.parse(cachedFeatured);
+      const cachedFeed = localStorage.getItem('ravindu_labs_cached_articles');
+      if (cachedFeed) {
+        const parsed = JSON.parse(cachedFeed);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.find(a => a.isFeatured) || parsed[0];
+        }
+      }
+    } catch (e) {}
+    return (articlesData && articlesData.length > 0) ? (articlesData.find(a => a.isFeatured) || articlesData[0]) : null;
+  });
 
   useEffect(() => {
+    let isMounted = true;
     const fetchTopArticle = async () => {
       try {
-        const response = await api.get('/articles/', {
-          params: { status: 'approved', limit: 5 }
-        });
-        if (response.data?.items?.length > 0) {
-          // Find featured or first
-          const top = response.data.items.find(a => a.isFeatured) || response.data.items[0];
+        const items = await fetchApprovedArticles();
+        if (isMounted && items && items.length > 0) {
+          const top = items.find(a => a.isFeatured) || items[0];
           setFeatured(top);
-        } else if (articlesData.length > 0) {
+          try {
+            localStorage.setItem('ravindu_labs_cached_featured', JSON.stringify(top));
+          } catch (e) {}
+        } else if (articlesData.length > 0 && !featured) {
           setFeatured(articlesData.find(a => a.isFeatured) || articlesData[0]);
         }
       } catch (err) {
-        if (articlesData.length > 0) {
+        if (articlesData.length > 0 && !featured) {
           setFeatured(articlesData.find(a => a.isFeatured) || articlesData[0]);
         }
       }
     };
     fetchTopArticle();
+    return () => { isMounted = false; };
   }, []);
 
   return (

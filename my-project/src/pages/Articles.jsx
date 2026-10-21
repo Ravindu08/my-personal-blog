@@ -5,32 +5,52 @@ import ArticleCard from '../components/ArticleCard';
 import ArticleModal from '../components/ArticleModal';
 import CommentsModal from '../components/CommentsModal';
 import { motion, AnimatePresence } from 'framer-motion';
-import api from '../services/api';
+import api, { fetchApprovedArticles } from '../services/api';
 
 const Articles = () => {
-  const [articles, setArticles] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [articles, setArticles] = useState(() => {
+    try {
+      const cached = localStorage.getItem('ravindu_labs_cached_articles');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+    return [];
+  });
+  const [loading, setLoading] = useState(() => {
+    try {
+      const cached = localStorage.getItem('ravindu_labs_cached_articles');
+      if (cached && JSON.parse(cached)?.length > 0) return false;
+    } catch (e) {}
+    return true;
+  });
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [commentsArticle, setCommentsArticle] = useState(null);
 
   useEffect(() => {
-    fetchApprovedArticles();
-  }, []);
+    let isMounted = true;
+    const loadArticles = async () => {
+      try {
+        if (articles.length === 0) {
+          setLoading(true);
+        }
+        const items = await fetchApprovedArticles();
+        if (isMounted && items && items.length > 0) {
+          setArticles(items);
+        }
+      } catch (err) {
+        console.error('Error fetching articles:', err);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
 
-  const fetchApprovedArticles = async () => {
-    try {
-      setLoading(true);
-      // Fetch only approved articles
-      const response = await api.get('/articles/', {
-        params: { status: 'approved', limit: 100 }
-      });
-      setArticles(response.data.items);
-    } catch (err) {
-      console.error('Error fetching articles:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    loadArticles();
+    return () => { isMounted = false; };
+  }, []);
 
   return (
     <>

@@ -18,7 +18,7 @@ const categories = [
 
 const ArticleSubmissionForm = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const { showWarning } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -34,12 +34,17 @@ const ArticleSubmissionForm = () => {
     content: ''
   });
 
+  // Always ensure page starts at the top
   useEffect(() => {
-    if (!isAuthenticated) {
-      showWarning('Please sign in to submit the article. Only registered users can submit articles.');
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, []);
+
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      showWarning('Please sign in to submit an article. Only registered users can submit articles.');
       navigate('/login');
     }
-  }, [isAuthenticated, navigate, showWarning]);
+  }, [authLoading, isAuthenticated, navigate, showWarning]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -119,21 +124,32 @@ const ArticleSubmissionForm = () => {
     }
   };
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center pt-24">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00A39C] mx-auto"></div>
+          <p className="mt-4 text-slate-600 font-medium">Checking authorization...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!isAuthenticated) {
     return null;
   }
 
   return (
-    <section className="py-24 px-4 bg-gradient-to-br from-slate-50 to-slate-100">
+    <section className="min-h-screen pt-28 md:pt-36 pb-20 px-4 bg-gradient-to-br from-slate-50 to-slate-100">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.35, ease: 'easeOut' }}
         className="max-w-4xl mx-auto"
       >
-        <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
-          <h2 className="text-4xl font-bold text-slate-800 mb-2 text-center">Submit Your Article</h2>
-          <p className="text-slate-600 mb-8 text-center">Share your knowledge with the IAS UWU community</p>
+        <div className="bg-white rounded-2xl shadow-2xl p-6 sm:p-8 md:p-12">
+          <h2 className="text-3xl sm:text-4xl font-bold text-slate-800 mb-2 text-center">Submit Your Article</h2>
+          <p className="text-slate-600 mb-8 text-center">Share your knowledge with the Ravindu Labs community</p>
 
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">

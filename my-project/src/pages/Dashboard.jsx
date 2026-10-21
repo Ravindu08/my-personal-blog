@@ -25,6 +25,11 @@ const Dashboard = () => {
   const { showSuccess, showError, showWarning } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
 
+  // Reset scroll to top whenever tab changes so the form always starts at the top
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [activeTab]);
+
   // ...existing state...
 
   // Article creation form state
@@ -958,11 +963,11 @@ const Dashboard = () => {
     <>
       {editArticleModalOpen && (
         <div
-          className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 md:p-6 overflow-y-auto"
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-start justify-center p-3 sm:p-6 overflow-y-auto"
           onClick={() => setEditArticleModalOpen(false)}
         >
           <div
-            className="bg-white w-full max-w-4xl rounded-2xl shadow-2xl p-6 md:p-8 relative"
+            className="bg-white w-full max-w-4xl rounded-2xl shadow-2xl p-6 sm:p-8 my-6 sm:my-10 relative"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -1351,10 +1356,10 @@ const Dashboard = () => {
         <div className="flex-1 md:ml-64 w-full">
           <motion.main
             key={activeTab}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            className="p-6 md:p-10 max-w-7xl mx-auto w-full"
+            transition={{ duration: 0.25 }}
+            className="pt-16 p-4 sm:p-6 md:p-10 max-w-7xl mx-auto w-full"
           >
             {activeTab === 'overview' && renderOverview()}
             {activeTab === 'articles' && renderArticles()}
