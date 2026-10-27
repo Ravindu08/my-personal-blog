@@ -46,7 +46,7 @@ const getGuestLikeId = () => {
 // Ping backend to warm up free tier instance
 export const pingBackend = () => {
   try {
-    api.get('/health', { timeout: 8000 }).catch(() => {});
+    api.get('/health/', { timeout: 60000 }).catch(() => {});
   } catch (e) {}
 };
 

@@ -1,15 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import GoogleAuthButton from '../components/GoogleAuthButton';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { googleAuthAPI, authAPI } from '../services/api';
+import { googleAuthAPI, authAPI, pingBackend } from '../services/api';
 
 const Login = () => {
   const navigate = useNavigate();
   const { login, setUser } = useAuth();
+
+  // Wake up backend as soon as user visits login page
+  useEffect(() => {
+    pingBackend();
+  }, []);
   // Handle Google credential response
   const handleGoogleLogin = async (credential) => {
     try {
@@ -178,8 +183,13 @@ const Login = () => {
               disabled={isLoading}
                 className="w-full bg-[#00A39C] text-white py-3 rounded-lg font-bold text-base sm:text-lg hover:bg-teal-700 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'Logging In...' : 'Login'}
+              {isLoading ? 'Connecting to Server...' : 'Login'}
             </motion.button>
+            {isLoading && (
+              <p className="text-xs text-center text-teal-600 mt-2 font-medium animate-pulse">
+                ⚡ Connecting to secure backend (first load may take ~20-30s while free server wakes up)...
+              </p>
+            )}
           </form>
 
           {/* Divider */}
