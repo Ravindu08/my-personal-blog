@@ -273,18 +273,18 @@ const ArticleSubmissionForm = () => {
             </div>
 
             {/* Submit Button */}
-            <div className="flex gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex-1 bg-[#00A39C] text-white py-4 rounded-lg font-semibold hover:bg-[#008a83] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 bg-[#00A39C] text-white py-3.5 sm:py-4 rounded-lg font-semibold hover:bg-[#008a83] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? 'Submitting...' : 'Submit Article'}
               </button>
               <button
                 type="button"
                 onClick={() => navigate('/')}
-                className="px-8 py-4 border-2 border-slate-300 text-slate-700 rounded-lg font-semibold hover:bg-slate-50 transition-colors"
+                className="px-8 py-3.5 sm:py-4 border-2 border-slate-300 text-slate-700 rounded-lg font-semibold hover:bg-slate-50 transition-colors text-center"
               >
                 Cancel
               </button>

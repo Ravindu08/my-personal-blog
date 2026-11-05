@@ -165,16 +165,16 @@ Phone: +94-XXXX-XXXXX`
           <p className="text-gray-700 leading-relaxed mb-6">
             By using the Ravindu Labs website, you acknowledge that you have read, understood, and agree to be bound by all the terms and conditions stated herein. If you do not agree with any part of these terms, you must immediately stop using this website.
           </p>
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-4">
             <button
               onClick={() => navigate('/')}
-              className="bg-[#00A39C] text-white px-8 py-3 rounded-lg font-semibold hover:bg-teal-700 transition-colors"
+              className="bg-[#00A39C] text-white px-8 py-3 rounded-lg font-semibold hover:bg-teal-700 transition-colors text-center"
             >
               I Agree & Continue
             </button>
             <button
               onClick={() => navigate('/')}
-              className="bg-slate-200 text-slate-800 px-8 py-3 rounded-lg font-semibold hover:bg-slate-300 transition-colors"
+              className="bg-slate-200 text-slate-800 px-8 py-3 rounded-lg font-semibold hover:bg-slate-300 transition-colors text-center"
             >
               Go Back
             </button>
@@ -189,10 +189,10 @@ Phone: +94-XXXX-XXXXX`
           className="mt-8 text-center text-gray-500 text-sm"
         >
           <p>
-            © 2024 IEEE IAS Chapter - Uva Wellassa University. All rights reserved.
+            © {new Date().getFullYear()} Ravindu Labs. All rights reserved.
           </p>
           <p className="mt-2">
-            If you have questions about these Terms & Conditions, please contact us at iasuwu@blog.com
+            If you have questions about these Terms & Conditions, please contact us at hello@ravindulabs.com
           </p>
         </motion.div>
       </div>

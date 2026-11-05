@@ -99,7 +99,7 @@ const Hero = () => {
           </motion.div>
 
           {/* Main Headline */}
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.1] mb-6">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.12] mb-6">
             Deep Dives into{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 via-cyan-300 to-indigo-400">
               Code, Systems
@@ -113,7 +113,7 @@ const Hero = () => {
           </p>
 
           {/* Compact Author Micro-Badge */}
-          <div className="inline-flex items-center gap-3 bg-white/5 border border-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl mb-8 shadow-inner">
+          <div className="inline-flex items-center gap-3 bg-white/5 border border-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl mb-8 shadow-inner max-w-full flex-wrap sm:flex-nowrap justify-center sm:justify-start">
             <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-teal-400 to-indigo-500 flex items-center justify-center font-bold text-white text-sm shadow">
               RT
             </div>

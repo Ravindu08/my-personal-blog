@@ -183,7 +183,7 @@ const ArticleFeed = ({ selectedCategory, setSelectedCategory }) => {
           </div>
 
           {/* Sort Selector & Count */}
-          <div className="flex items-center justify-between lg:justify-end gap-4 text-xs sm:text-sm text-slate-500">
+          <div className="flex flex-wrap sm:flex-nowrap items-center justify-between lg:justify-end gap-3 text-xs sm:text-sm text-slate-500">
             <span className="font-mono text-xs">
               Showing <strong className="text-slate-800">{filteredArticles.length}</strong> articles
             </span>

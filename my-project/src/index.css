@@ -206,6 +206,17 @@ mark.hl-emerald, .hl-emerald {
 /* ========================================================
    Rendered Article Typography (Dark Reader Theme)
    ======================================================== */
+.article-rendered-content {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.article-rendered-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+}
+
 .article-rendered-content h1 {
   font-size: 2.25rem;
   font-weight: 800;
