@@ -47,7 +47,7 @@ const Home = () => {
             <span className="text-sm sm:text-lg font-semibold text-[#00A39C]">WELCOME TO RAVINDU LABS</span>
             <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold my-4 leading-tight">Hi, I'm Ravindu</h1>
             <p className="text-base sm:text-lg md:text-xl text-gray-400 max-w-lg mb-8">
-              A passionate Software Engineer and AI enthusiast. I build digital experiences and write about technology, code, and innovation.
+              A passionate CS Undergraduate and AI enthusiast. I build digital experiences and write about technology, code, and innovation.
             </p>
             <Link to="projects" spy={true} smooth={true} duration={500} offset={-80} className="inline-flex items-center justify-center w-full sm:w-auto bg-[#00A39C] text-white px-8 py-3 rounded-full text-lg font-bold hover:bg-teal-700 transition-colors cursor-pointer">
               View My Projects

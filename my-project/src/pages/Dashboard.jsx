@@ -469,7 +469,12 @@ const Dashboard = () => {
       >
         <div className="absolute -right-10 -top-10 h-24 w-24 rounded-full bg-white/10 blur-2xl" />
         <div className="absolute -bottom-8 -left-8 h-24 w-24 rounded-full bg-white/10 blur-2xl" />
-        <h1 className="relative text-2xl sm:text-3xl md:text-4xl font-bold mb-2 leading-tight break-words">Welcome back, {authorName}!</h1>
+        <div className="relative flex flex-wrap items-center gap-3 mb-2">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight break-words">Welcome back, {authorName}!</h1>
+          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white/20 text-white backdrop-blur-sm border border-white/20 shadow-sm">
+            CS Undergraduate
+          </span>
+        </div>
         <p className="relative text-sm sm:text-base md:text-lg opacity-90 max-w-2xl">Here's how your articles are performing.</p>
       </motion.div>
 

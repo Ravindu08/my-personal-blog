@@ -119,7 +119,7 @@ const Hero = () => {
             </div>
             <div className="text-left text-xs">
               <p className="font-semibold text-slate-200">Written by Ravindu Tharusha</p>
-              <p className="text-slate-400">Software Engineer • Sri Lanka</p>
+              <p className="text-slate-400">CS Undergraduate • Sri Lanka</p>
             </div>
             <div className="h-6 w-px bg-white/10 mx-1"></div>
             <div className="flex items-center gap-2 text-slate-300">

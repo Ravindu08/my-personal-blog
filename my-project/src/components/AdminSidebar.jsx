@@ -62,11 +62,11 @@ const AdminSidebar = ({ activeTab, setActiveTab }) => {
         <div className="p-6 border-b border-slate-700">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 bg-[#00A39C] rounded-lg flex items-center justify-center font-bold text-white">
-              IAS
+              RL
             </div>
             <div>
               <h2 className="text-xl font-bold text-[#00A39C]">Admin Panel</h2>
-              <p className="text-xs text-gray-400">Ravindu Labs</p>
+              <p className="text-xs text-gray-400">CS Undergraduate • Ravindu Labs</p>
             </div>
           </div>
         </div>

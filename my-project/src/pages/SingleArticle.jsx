@@ -358,10 +358,10 @@ const SingleArticle = () => {
           <div className="text-center sm:text-left flex-grow">
             <div className="flex items-center justify-center sm:justify-between mb-1">
               <h3 className="font-bold text-white text-base">Written by {authorName}</h3>
-              <span className="hidden sm:inline-block text-xs font-mono text-teal-400">Author & Engineer</span>
+              <span className="hidden sm:inline-block text-xs font-mono text-teal-400">CS Undergraduate</span>
             </div>
             <p className="text-slate-300 text-xs sm:text-sm font-light leading-relaxed mb-3">
-              Full-Stack Software Engineer exploring web development, scalable backends, and cloud architectures.
+              CS Undergraduate exploring web development, scalable backends, and cloud architectures.
             </p>
             <div className="flex items-center justify-center sm:justify-start gap-3 text-xs text-slate-400">
               <a

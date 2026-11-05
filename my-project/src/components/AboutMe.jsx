@@ -30,7 +30,7 @@ const AboutMe = () => {
           >
             <h3 className="text-2xl font-bold text-slate-800 mb-4">Hello! I'm Ravindu.</h3>
             <p className="text-slate-600 text-lg leading-relaxed mb-6">
-              I am a dedicated Software Engineer based in Sri Lanka, specializing in full-stack development and artificial intelligence. My passion lies in solving complex problems and turning innovative ideas into reality through clean, efficient code.
+              I am a dedicated CS Undergraduate based in Sri Lanka, specializing in full-stack development and artificial intelligence. My passion lies in solving complex problems and turning innovative ideas into reality through clean, efficient code.
             </p>
             <p className="text-slate-600 text-lg leading-relaxed mb-8">
               When I'm not coding, you can find me writing tech blogs, contributing to open-source, or exploring the latest trends in machine learning.

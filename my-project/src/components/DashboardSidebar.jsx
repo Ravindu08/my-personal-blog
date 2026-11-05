@@ -62,7 +62,8 @@ const DashboardSidebar = ({ activeTab, setActiveTab }) => {
         className={`fixed left-0 top-0 h-screen w-64 bg-gradient-to-b from-slate-900 to-slate-800 text-white z-30 shadow-2xl`}
       >
         <div className="p-6">
-          <h2 className="text-2xl font-bold text-[#00A39C] mb-8">Author Hub</h2>
+          <h2 className="text-2xl font-bold text-[#00A39C] mb-1">Author Hub</h2>
+          <p className="text-xs text-slate-400 mb-8">CS Undergraduate</p>
 
           {/* Menu Items */}
           <nav className="space-y-3">
