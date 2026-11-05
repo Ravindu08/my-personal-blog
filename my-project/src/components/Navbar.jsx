@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaBars, FaTimes, FaUser, FaSignOutAlt } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import { getValidAvatarUrl } from '../utils/imageUtils';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -132,8 +133,16 @@ const Navbar = () => {
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold border-2 transition-all duration-300 hover:scale-105 ${scrolled ? 'border-slate-800 text-slate-800 hover:bg-slate-100' : 'border-white text-white hover:bg-white/20'}`}
               >
-                {user?.profile_image ? (
-                  <img src={user.profile_image} alt="Profile" className="w-6 h-6 rounded-full object-cover border border-white/40" />
+                {user ? (
+                  <img
+                    src={getValidAvatarUrl(user.profile_image, user.full_name)}
+                    alt="Profile"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.full_name || 'User')}&background=00A39C&color=fff`;
+                    }}
+                    className="w-7 h-7 rounded-full object-cover border border-white/40"
+                  />
                 ) : (
                   <FaUser className="text-lg" />
                 )}

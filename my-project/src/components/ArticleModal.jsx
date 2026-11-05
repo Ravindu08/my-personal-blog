@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { FaTimes } from 'react-icons/fa';
 import { commentsAPI } from '../services/api';
 import ArticleContentRenderer from './ArticleContentRenderer';
-import { getValidImageUrl, handleImageError } from '../utils/imageUtils';
+import { getValidImageUrl, getValidAvatarUrl, handleImageError } from '../utils/imageUtils';
 
 const backdropVariants = { hidden: { opacity: 0 }, visible: { opacity: 1 } };
 const modalVariants = {
@@ -17,7 +17,7 @@ const ArticleModal = ({ article, onClose }) => {
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [newComment, setNewComment] = useState('');
   const authorName = (article?.author || 'Anonymous').replace(/\b([A-Za-z]+)'s\b/g, '$1').trim();
-  const authorImage = article?.authorImage || article?.profile_image || `https://ui-avatars.com/api/?name=${encodeURIComponent(authorName)}&background=00A39C&color=fff`;
+  const authorImage = getValidAvatarUrl(article?.authorImage || article?.profile_image, authorName);
 
   useEffect(() => {
     const fetchComments = async () => {

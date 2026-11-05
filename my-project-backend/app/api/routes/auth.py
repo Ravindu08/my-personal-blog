@@ -4,6 +4,7 @@ from app.schemas.user import UserCreate, UserLogin, UserOut
 from app.schemas.token import Token
 from app.core.security import get_password_hash, verify_password, create_access_token
 from app.core.config import settings
+from app.api.routes.profile import normalize_avatar_url
 from app.db.mongo import get_db
 from app.api.dependencies import get_current_active_user
 
@@ -100,7 +101,7 @@ async def get_current_user_info(current_user=Depends(get_current_active_user)):
         id=current_user.id,
         email=current_user.email,
         full_name=current_user.full_name,
-        profile_image=getattr(current_user, 'profile_image', None),
+        profile_image=normalize_avatar_url(getattr(current_user, 'profile_image', None)),
         is_active=current_user.is_active,
         is_superuser=current_user.is_superuser,
         created_at=current_user.created_at

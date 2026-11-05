@@ -6,7 +6,7 @@ import { FaHeart, FaRegHeart, FaEye, FaComment, FaShare, FaCheck, FaArrowLeft, F
 import api, { API_URL, engagementAPI, commentsAPI, fetchApprovedArticles } from '../services/api';
 import ArticleCard from '../components/ArticleCard';
 import ArticleContentRenderer from '../components/ArticleContentRenderer';
-import { getValidImageUrl, handleImageError } from '../utils/imageUtils';
+import { getValidImageUrl, getValidAvatarUrl, handleImageError } from '../utils/imageUtils';
 
 const SingleArticle = () => {
   const { slug } = useParams();
@@ -205,9 +205,7 @@ const SingleArticle = () => {
   }
 
   const authorName = (article.author || 'Ravindu Tharusha').replace(/\b([A-Za-z]+)'s\b/g, '$1').trim();
-  const authorImage =
-    getValidImageUrl(article.authorImage || article.profile_image) ||
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(authorName)}&background=00A39C&color=fff`;
+  const authorImage = getValidAvatarUrl(article.authorImage || article.profile_image, authorName);
 
   const displayDate = article.createdAt
     ? new Date(article.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })

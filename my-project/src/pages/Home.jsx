@@ -7,6 +7,7 @@ import ArticleCard from '../components/ArticleCard';
 import CommentsModal from '../components/CommentsModal';
 import { useCountdown } from '../hooks/useCountdown';
 import { FaTrophy, FaPencilAlt, FaUsers } from 'react-icons/fa';
+import { getValidAvatarUrl } from '../utils/imageUtils';
 
 const CountdownItem = ({ value, label }) => (
   <div className="flex flex-col items-center bg-white/10 backdrop-blur-sm p-4 rounded-lg w-24">
@@ -190,7 +191,7 @@ const Home = () => {
             <div className="p-4 sm:p-8 pt-6">
               <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-4">
                 <img
-                  src={selectedArticle.authorImage || selectedArticle.profile_image || `https://ui-avatars.com/api/?name=${encodeURIComponent((selectedArticle.author || 'Anonymous').replace(/\b([A-Za-z]+)'s\b/g, '$1').trim())}&background=00A39C&color=fff`}
+                  src={getValidAvatarUrl(selectedArticle.authorImage || selectedArticle.profile_image, (selectedArticle.author || 'Anonymous').replace(/\b([A-Za-z]+)'s\b/g, '$1').trim())}
                   alt={(selectedArticle.author || 'Anonymous').replace(/\b([A-Za-z]+)'s\b/g, '$1').trim()}
                   className="w-10 h-10 rounded-full object-cover border"
                 />

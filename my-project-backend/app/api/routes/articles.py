@@ -63,7 +63,7 @@ async def enrich_articles_with_author_profile(items: list, db) -> list:
             display_name = profile.get("full_name") or doc.get("author") or profile.get("email", "")
             doc["author"] = clean_author_name(display_name)
             if profile.get("profile_image"):
-                doc["authorImage"] = profile.get("profile_image")
+                doc["authorImage"] = normalize_featured_image_url(profile.get("profile_image"), None)
         else:
             doc["author"] = clean_author_name(doc.get("author", ""))
     return items
@@ -278,6 +278,8 @@ async def list_articles(
 
     for item in items:
         item["featuredImage"] = normalize_featured_image_url(item.get("featuredImage"), request)
+        if item.get("authorImage"):
+            item["authorImage"] = normalize_featured_image_url(item.get("authorImage"), request)
     return {"items": items, "count": len(items)}
 
 
@@ -299,6 +301,8 @@ async def get_article(slug: str, request: Request):
         item.setdefault("commentsCount", 0)
 
     item["featuredImage"] = normalize_featured_image_url(item.get("featuredImage"), request)
+    if item.get("authorImage"):
+        item["authorImage"] = normalize_featured_image_url(item.get("authorImage"), request)
     return item
 
 

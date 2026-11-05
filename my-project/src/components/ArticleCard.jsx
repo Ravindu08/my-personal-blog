@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { FaHeart, FaRegHeart, FaEye, FaComment, FaClock, FaShareAlt, FaCheck, FaArrowRight } from 'react-icons/fa';
 import { engagementAPI, commentsAPI, API_URL } from '../services/api';
-import { getValidImageUrl, handleImageError } from '../utils/imageUtils';
+import { getValidImageUrl, getValidAvatarUrl, handleImageError } from '../utils/imageUtils';
 
 const ArticleCard = ({ article, index }) => {
   const navigate = useNavigate();
@@ -74,9 +74,7 @@ const ArticleCard = ({ article, index }) => {
   };
 
   const authorName = (article.author || 'Ravindu Tharusha').replace(/\b([A-Za-z]+)'s\b/g, '$1').trim();
-  const authorImage =
-    getValidImageUrl(article.authorImage || article.profile_image) ||
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(authorName)}&background=00A39C&color=fff`;
+  const authorImage = getValidAvatarUrl(article.authorImage || article.profile_image, authorName);
 
   // Format date
   const displayDate = article.createdAt

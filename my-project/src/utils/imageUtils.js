@@ -64,7 +64,7 @@ export const getFallbackCover = (category = '', seed = '') => {
 };
 
 /**
- * Resolves an image URL so it works in both local and online production modes.
+ * Resolves an article featured image URL so it works in both local and online production modes.
  * Ensures /uploads/... works via static Vercel CDN or Vite dev proxy.
  */
 export const getValidImageUrl = (url, category = '', seed = '') => {
@@ -104,6 +104,48 @@ export const getValidImageUrl = (url, category = '', seed = '') => {
   }
 
   return trimmed;
+};
+
+/**
+ * Resolves a user or author avatar image URL.
+ * Falls back to UI Avatars (name-based badge) instead of a blog post cover.
+ */
+export const getValidAvatarUrl = (url, name = 'Ravindu Tharusha') => {
+  const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'User')}&background=00A39C&color=fff`;
+  if (!url || typeof url !== 'string' || !url.trim()) {
+    return fallback;
+  }
+
+  const trimmed = url.trim();
+
+  // Data URLs or Blob URLs
+  if (trimmed.startsWith('data:') || trimmed.startsWith('blob:')) {
+    return trimmed;
+  }
+
+  // Cloudinary or Unsplash
+  if (
+    trimmed.startsWith('https://res.cloudinary.com') ||
+    trimmed.startsWith('https://images.unsplash.com')
+  ) {
+    return trimmed;
+  }
+
+  // Any uploads filename
+  const uploadsMatch = trimmed.match(/uploads\/([a-zA-Z0-9_-]+\.[a-zA-Z0-9]+)/i);
+  if (uploadsMatch) {
+    return `/uploads/${uploadsMatch[1]}`;
+  }
+
+  if (trimmed.startsWith('/')) {
+    return trimmed;
+  }
+
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    return trimmed;
+  }
+
+  return fallback;
 };
 
 export const handleImageError = (e, category = '', seed = '') => {

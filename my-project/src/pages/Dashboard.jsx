@@ -18,6 +18,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import api, { commentsAPI, profileAPI, uploadAPI } from '../services/api';
 import RichTextEditor from '../components/RichTextEditor';
+import { getValidAvatarUrl } from '../utils/imageUtils';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -1264,8 +1265,12 @@ const Dashboard = () => {
               <label className="block text-sm font-semibold text-slate-700 mb-2">Profile Photo</label>
               <div className="flex items-center gap-4">
                 <img
-                  src={profileData.profile_image || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(profileData.full_name || authorName || 'User') + '&background=00A39C&color=fff'}
+                  src={getValidAvatarUrl(profileData.profile_image, profileData.full_name || authorName)}
                   alt="Profile"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.full_name || authorName || 'User')}&background=00A39C&color=fff`;
+                  }}
                   className="w-16 h-16 rounded-full object-cover border border-slate-200"
                 />
                 <label className="px-4 py-2 border-2 border-dashed border-slate-300 rounded-lg bg-slate-50 hover:bg-slate-100 cursor-pointer text-sm font-semibold text-slate-700">

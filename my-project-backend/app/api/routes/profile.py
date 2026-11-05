@@ -6,6 +6,16 @@ from app.core.security import get_password_hash, verify_password
 from app.db.mongo import get_db
 from app.core.config import settings
 from bson import ObjectId
+import re
+
+def normalize_avatar_url(url: str | None) -> str | None:
+    if not url:
+        return url
+    val = str(url).strip()
+    match = re.search(r"/uploads/([a-zA-Z0-9_-]+\.[a-zA-Z0-9]+)", val, re.IGNORECASE)
+    if match:
+        return f"/uploads/{match.group(1)}"
+    return val
 
 router = APIRouter()
 
@@ -19,7 +29,7 @@ async def get_my_profile(
         "email": current_user.email,
         "full_name": current_user.full_name or "",
         "bio": getattr(current_user, 'bio', ''),
-        "profile_image": getattr(current_user, 'profile_image', None),
+        "profile_image": normalize_avatar_url(getattr(current_user, 'profile_image', None)),
         "is_superuser": current_user.is_superuser
     }
 
@@ -52,7 +62,7 @@ async def update_my_profile(
             "email": updated_user["email"],
             "full_name": updated_user.get("full_name", ""),
             "bio": updated_user.get("bio", ""),
-            "profile_image": updated_user.get("profile_image"),
+            "profile_image": normalize_avatar_url(updated_user.get("profile_image")),
             "is_superuser": updated_user.get("is_superuser", False)
         }
     except Exception as e:
