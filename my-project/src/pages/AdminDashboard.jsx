@@ -1374,10 +1374,10 @@ const AdminDashboard = () => {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-3">
                     <input
-                      type="url"
+                      type="text"
                       value={newArticle.featuredImage}
                       onChange={(e) => setNewArticle({ ...newArticle, featuredImage: e.target.value })}
-                      placeholder="https://example.com/image.jpg or use Upload"
+                      placeholder="https://example.com/image.jpg or upload"
                       className="w-full px-4 py-2 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none"
                       required
                     />
@@ -1391,7 +1391,14 @@ const AdminDashboard = () => {
                       {uploadingArticleImage ? 'Uploading...' : 'Upload Image'}
                     </label>
                   </div>
-                  <p className="text-xs text-slate-500">Paste a URL or upload from device. Required for publication.</p>
+                  {newArticle.featuredImage && (
+                    <img
+                      src={newArticle.featuredImage}
+                      alt="Featured Preview"
+                      className="mt-2 w-full max-h-48 object-contain rounded-lg border border-slate-200 bg-slate-50"
+                    />
+                  )}
+                  <p className="text-xs text-slate-500 mt-1">Paste a URL or upload from device. Required for publication.</p>
                 </div>
 
                 <div>

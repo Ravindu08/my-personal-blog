@@ -246,6 +246,21 @@
   ```
   - එමඟින් Browser එක කුමන URL එකක් ඉල්ලුවද Vercel එක `index.html` ලබා දෙන අතර, React Router එක මඟින් නිවැරදි Page Component එක Render කර පෙන්වයි.
 
+### 22. Article Image Upload & Fallback Cover Fix (Same Image Bug Fixed)
+- **ගැටලුව:** අලුතින් ලිපි ලියද්දී (Article Submission / Dashboard / Admin) අප්ලෝඩ් කරන පින්තූර වෙබ් අඩවියේ නිවැරදිව දිස් නොවීම සහ සෑම ලිපියකටම එකම Unsplash fallback පින්තූරය (කෝඩින් ලැප්ටොප් ෆොටෝ එක) නැවත නැවත දිස්වීම.
+- **මූලික හේතු (Root Causes):**
+  1. **Render Free Tier Ephemeral Storage:** Render free tier backend එකේ local disk එක තාවකාලික (ephemeral) බැවින්, Render server එක restart/spin down වන විට upload කර තිබූ පින්තූර ගොනු මැකී ගොස් 404 Not Found වීම.
+  2. **Vercel Public Uploads Missing:** පින්තූර backend එකට upload වුවද, frontend හි `public/uploads/` ෆෝල්ඩරය වෙත ඒවා copy නොවූ බැවින් Vercel build එකේ එම files නොතිබීම.
+  3. **Localhost URL Block in `imageUtils.js`:** `imageUtils.js` තුළ `127.0.0.1` හෝ `localhost` තිබූ ඕනෑම පින්තූරයක් බලහත්කාරයෙන් fallback cover එකට හරවා තිබීම සහ `normalize_featured_image_url` මඟින් වැරදි host prepend වීම.
+  4. **Single Image Fallback per Category:** `imageUtils.js` හි fallback dictionary එකේ "web dev" category එක සඳහා තිබුණේ එකම Unsplash cover link එකක් පමණක් බැවින්, පින්තූරයක් load නොවූ සෑම article එකකටම එම එකම පින්තූරය වැටීම.
+- **ක්‍රියාත්මක කළ ස්ථිර විසඳුම් (Permanent Fixes):**
+  1. **Lost Image Recovery:** Downloads ෆෝල්ඩරයේ තිබූ නිවැරදි infographics 6 ම (`Git and GitHub`, `Cloud Computing`, `SQL Injection`, `ML vs Deep Learning`, `REST API vs GraphQL`, `How APIs Connect`) සොයාගෙන `my-project/public/uploads/` සහ `my-project-backend/uploads/` වෙත නිවැරදි UUID නම් වලින් copy කරන ලදී.
+  2. **Database Links Cleaned:** MongoDB හි සියලුම articles වල `featuredImage` links පිරිසිදු කර portable `/uploads/<filename>` format එකට update කරන ලදී.
+  3. **Dual Mirroring on Upload (`uploads.py`):** අනාගතයේ local development එකේදී upload කරන ඕනෑම file එකක් backend `uploads/` වලට අමතරව frontend `my-project/public/uploads/` වලටත් ස්වයංක්‍රීයව copy වන පරිදි සකසන ලදී.
+  4. **Vite Dev Proxy (`vite.config.js`):** Localhost හි `npm run dev` කරද්දී `/uploads/` requests ස්වයංක්‍රීයව port 8000 වෙත proxy වන පරිදි Vite configuration update කරන ලදී.
+  5. **Dynamic Diverse Fallback Covers (`imageUtils.js`):** කිසියම් හේතුවකින් පින්තූරයක් load නොවුවද, ලිපියේ title එක අනුව hash එකක් ගණනය කර වෙන වෙනම ආකර්ෂණීය tech images තෝරාගන්නා dynamic fallback engine එකක් හඳුන්වා දෙන ලදී.
+
+
 
 
 

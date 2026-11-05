@@ -1,46 +1,95 @@
 // src/utils/imageUtils.js
 
 const CATEGORY_COVERS = {
-  'web dev': 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1200',
-  'frontend': 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=1200',
-  'backend': 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1200',
-  'python': 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1200',
-  'ai': 'https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1200',
-  'cloud': 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200',
-  'default': 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1200',
+  'web dev': [
+    'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1200',
+    'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=1200',
+    'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1200',
+    'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1200',
+  ],
+  'frontend': [
+    'https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=1200',
+    'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?q=80&w=1200',
+    'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?q=80&w=1200',
+  ],
+  'backend': [
+    'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=1200',
+    'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=1200',
+  ],
+  'python': [
+    'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1200',
+    'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=1200',
+  ],
+  'ai': [
+    'https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1200',
+    'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1200',
+  ],
+  'cloud': [
+    'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200',
+    'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?q=80&w=1200',
+  ],
+  'default': [
+    'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1200',
+    'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200',
+    'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1200',
+  ],
 };
 
-export const getFallbackCover = (category = '') => {
+function hashString(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
+export const getFallbackCover = (category = '', seed = '') => {
   const cat = (category || '').toLowerCase().trim();
-  for (const [key, cover] of Object.entries(CATEGORY_COVERS)) {
-    if (cat.includes(key)) {
-      return cover;
+  let coversList = CATEGORY_COVERS.default;
+
+  for (const [key, covers] of Object.entries(CATEGORY_COVERS)) {
+    if (key !== 'default' && cat.includes(key)) {
+      coversList = covers;
+      break;
     }
   }
-  return CATEGORY_COVERS.default;
+
+  if (!seed) {
+    return coversList[0];
+  }
+
+  const index = hashString(seed) % coversList.length;
+  return coversList[index];
 };
 
 /**
  * Resolves an image URL so it works in both local and online production modes.
- * Converts any local 'http://127.0.0.1:8000/uploads/...' or Render '/uploads/...'
- * to the CDN-hosted static path '/uploads/...'.
+ * Ensures /uploads/... works via static Vercel CDN or Vite dev proxy.
  */
-export const getValidImageUrl = (url, category = '') => {
+export const getValidImageUrl = (url, category = '', seed = '') => {
   if (!url || typeof url !== 'string' || !url.trim()) {
-    return getFallbackCover(category);
+    return getFallbackCover(category, seed);
   }
 
   const trimmed = url.trim();
 
-  // If already Cloudinary or Unsplash or external HTTPS (not localhost or backend uploads)
-  if (trimmed.startsWith('https://res.cloudinary.com') || trimmed.startsWith('https://images.unsplash.com')) {
+  // Data URLs or Blob URLs
+  if (trimmed.startsWith('data:') || trimmed.startsWith('blob:')) {
     return trimmed;
   }
 
-  // Check if it's a localhost URL or Render backend uploads URL
+  // Cloudinary, Unsplash, or other external CDN
+  if (
+    trimmed.startsWith('https://res.cloudinary.com') ||
+    trimmed.startsWith('https://images.unsplash.com')
+  ) {
+    return trimmed;
+  }
+
+  // Any uploads filename (whether local, render, or relative)
   const uploadsMatch = trimmed.match(/uploads\/([a-zA-Z0-9_-]+\.[a-zA-Z0-9]+)/i);
   if (uploadsMatch) {
-    // Return relative /uploads/filename path which is served directly by Vercel CDN
     return `/uploads/${uploadsMatch[1]}`;
   }
 
@@ -49,15 +98,15 @@ export const getValidImageUrl = (url, category = '') => {
     return trimmed;
   }
 
-  // If unencrypted http localhost or 127.0.0.1
-  if (trimmed.includes('127.0.0.1') || trimmed.includes('localhost')) {
-    return getFallbackCover(category);
+  // If external HTTP / HTTPS URL
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    return trimmed;
   }
 
   return trimmed;
 };
 
-export const handleImageError = (e, category = '') => {
+export const handleImageError = (e, category = '', seed = '') => {
   e.currentTarget.onerror = null; // Prevent infinite fallback loops
-  e.currentTarget.src = getFallbackCover(category);
+  e.currentTarget.src = getFallbackCover(category, seed);
 };

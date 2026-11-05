@@ -90,7 +90,7 @@ def calculate_reading_time(content: str) -> str:
 
 
 def normalize_featured_image_url(image_url: str | None, request: Request) -> str | None:
-    """Rewrite localhost upload URLs to the current backend host for deployed clients."""
+    """Normalize upload URLs to portable static paths or absolute external CDN URLs."""
     if not image_url:
         return image_url
 
@@ -98,20 +98,14 @@ def normalize_featured_image_url(image_url: str | None, request: Request) -> str
     if not value:
         return value
 
-    local_prefixes = (
-        "http://127.0.0.1:8000/uploads/",
-        "http://localhost:8000/uploads/",
-        "https://127.0.0.1:8000/uploads/",
-        "https://localhost:8000/uploads/",
-    )
-
+    # If already a relative uploads path, keep it relative so Vercel CDN or frontend can serve it
     if value.startswith("/uploads/"):
-        return f"{str(request.base_url).rstrip('/')}{value}"
+        return value
 
-    for prefix in local_prefixes:
-        if value.startswith(prefix):
-            filename = value.split("/uploads/", 1)[1]
-            return f"{str(request.base_url).rstrip('/')}/uploads/{filename}"
+    # Check for legacy localhost or Render backend upload URLs and convert to relative /uploads/
+    match = re.search(r"/uploads/([a-zA-Z0-9_-]+\.[a-zA-Z0-9]+)", value, re.IGNORECASE)
+    if match:
+        return f"/uploads/{match.group(1)}"
 
     return value
 
@@ -182,6 +176,8 @@ async def article_share_preview(slug: str, request: Request):
     description_text = (short_description or fallback_content[:220] or "Read this article on Ravindu Labs").strip()
     description = html.escape(description_text)
 
+    frontend_base = get_public_frontend_base(request)
+
     raw_image_url = (
         doc.get("featuredImage")
         or doc.get("featured_image")
@@ -191,12 +187,14 @@ async def article_share_preview(slug: str, request: Request):
     if raw_image_url.startswith("http://") or raw_image_url.startswith("https://"):
         image_url_raw = raw_image_url
     elif raw_image_url.startswith("/"):
-        image_url_raw = f"{str(request.base_url).rstrip('/')}{raw_image_url}"
+        if frontend_base:
+            image_url_raw = f"{frontend_base}{raw_image_url}"
+        else:
+            image_url_raw = f"{str(request.base_url).rstrip('/')}{raw_image_url}"
     else:
         image_url_raw = raw_image_url
     image_url = html.escape(image_url_raw)
 
-    frontend_base = get_public_frontend_base(request)
     canonical_article_url = f"{frontend_base}/article/{slug}" if frontend_base else ""
 
     # Prefer the canonical article URL so scrapers do not lock onto localhost URLs.

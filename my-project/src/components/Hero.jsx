@@ -205,9 +205,9 @@ const Hero = () => {
                 {/* Image Cover Container */}
                 <div className="relative h-56 sm:h-64 overflow-hidden bg-slate-950">
                   <img
-                    src={getValidImageUrl(featured.featuredImage, featured.category)}
+                    src={getValidImageUrl(featured.featuredImage, featured.category, featured.title || featured.slug)}
                     alt={featured.title}
-                    onError={(e) => handleImageError(e, featured.category)}
+                    onError={(e) => handleImageError(e, featured.category, featured.title || featured.slug)}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent"></div>

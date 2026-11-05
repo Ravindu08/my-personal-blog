@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { FaTimes } from 'react-icons/fa';
 import { commentsAPI } from '../services/api';
 import ArticleContentRenderer from './ArticleContentRenderer';
+import { getValidImageUrl, handleImageError } from '../utils/imageUtils';
 
 const backdropVariants = { hidden: { opacity: 0 }, visible: { opacity: 1 } };
 const modalVariants = {
@@ -69,8 +70,13 @@ const ArticleModal = ({ article, onClose }) => {
         variants={modalVariants}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="relative bg-slate-50 rounded-t-2xl">
-          <img src={article.featuredImage} alt={article.title} className="w-full h-80 object-contain rounded-t-2xl" />
+        <div className="relative bg-slate-900 rounded-t-2xl">
+          <img
+            src={getValidImageUrl(article.featuredImage, article.category, article.title || article.slug)}
+            alt={article.title}
+            onError={(e) => handleImageError(e, article.category, article.title || article.slug)}
+            className="w-full h-80 object-cover rounded-t-2xl"
+          />
           <button onClick={onClose} className="absolute top-4 right-4 bg-black/50 text-white rounded-full p-2 hover:bg-black transition-colors z-10">
             <FaTimes size={20} />
           </button>

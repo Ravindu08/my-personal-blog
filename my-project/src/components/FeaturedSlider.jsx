@@ -8,6 +8,7 @@ import 'swiper/css/effect-coverflow';
 import 'swiper/css/navigation';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import api from '../services/api';
+import { getValidImageUrl, handleImageError } from '../utils/imageUtils';
 
 const FeaturedSlider = () => {
   const [featuredArticles, setFeaturedArticles] = useState([]);
@@ -75,9 +76,10 @@ const FeaturedSlider = () => {
                 <SwiperSlide key={article.slug} className="!w-[240px] sm:!w-[300px] md:!w-[400px]">
                   <div className="relative h-80 sm:h-96 w-full rounded-xl shadow-lg overflow-hidden group bg-slate-100">
                     <img
-                      src={article.featuredImage || 'https://via.placeholder.com/400x400?text=No+Image'}
+                      src={getValidImageUrl(article.featuredImage, article.category, article.title || article.slug)}
                       alt={article.title}
-                      className="w-full h-full object-contain"
+                      onError={(e) => handleImageError(e, article.category, article.title || article.slug)}
+                      className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
                     <div className="absolute bottom-0 left-0 p-6 text-white">

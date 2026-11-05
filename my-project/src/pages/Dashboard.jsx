@@ -869,7 +869,7 @@ const Dashboard = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-3">
               <input 
-                type="url" 
+                type="text" 
                 name="featuredImage"
                 value={newArticle.featuredImage}
                 onChange={handleArticleInputChange}
@@ -887,6 +887,13 @@ const Dashboard = () => {
                 {createImageUploading ? 'Uploading...' : 'Upload Image'}
               </label>
             </div>
+            {newArticle.featuredImage && (
+              <img
+                src={newArticle.featuredImage}
+                alt="Featured Preview"
+                className="mt-2 w-full max-h-48 object-contain rounded-lg border border-slate-200 bg-slate-50"
+              />
+            )}
             <p className="text-xs text-slate-500">Paste a URL or upload from your device. Required for publication.</p>
           </div>
 
@@ -1054,7 +1061,7 @@ const Dashboard = () => {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-3">
                   <input
-                    type="url"
+                    type="text"
                     value={editingArticle.featuredImage}
                     onChange={(e) => setEditingArticle({ ...editingArticle, featuredImage: e.target.value })}
                     className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none"
@@ -1070,6 +1077,13 @@ const Dashboard = () => {
                     {editImageUploading ? 'Uploading...' : 'Upload Image'}
                   </label>
                 </div>
+                {editingArticle.featuredImage && (
+                  <img
+                    src={editingArticle.featuredImage}
+                    alt="Featured Preview"
+                    className="mt-2 w-full max-h-48 object-contain rounded-lg border border-slate-200 bg-slate-50"
+                  />
+                )}
                 <p className="text-xs text-slate-500 mt-1">Paste a URL or upload from your device. Required for publication.</p>
               </div>
 

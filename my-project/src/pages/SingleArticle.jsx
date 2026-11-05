@@ -315,9 +315,9 @@ const SingleArticle = () => {
         {article.featuredImage && (
           <div className="relative rounded-2xl overflow-hidden mb-12 border border-white/10 shadow-2xl bg-slate-950 aspect-video max-h-[460px]">
             <img
-              src={getValidImageUrl(article.featuredImage, article.category)}
+              src={getValidImageUrl(article.featuredImage, article.category, article.title || article.slug)}
               alt={article.title}
-              onError={(e) => handleImageError(e, article.category)}
+              onError={(e) => handleImageError(e, article.category, article.title || article.slug)}
               className="w-full h-full object-cover"
             />
           </div>

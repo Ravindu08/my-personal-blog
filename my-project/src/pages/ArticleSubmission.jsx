@@ -221,11 +221,11 @@ const ArticleSubmissionForm = () => {
               </label>
               <div className="space-y-3">
                 <input
-                  type="url"
+                  type="text"
                   name="featuredImage"
                   value={formData.featuredImage}
                   onChange={handleChange}
-                  placeholder="https://example.com/image.jpg"
+                  placeholder="Paste image URL (https://...) or choose file below"
                   className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:border-[#00A39C] focus:outline-none transition-colors text-slate-900 bg-white placeholder-slate-400 font-medium"
                 />
                 <label className="flex items-center justify-center px-4 py-3 border-2 border-dashed border-slate-300 rounded-lg bg-slate-50 hover:bg-slate-100 cursor-pointer text-sm font-semibold text-slate-700">

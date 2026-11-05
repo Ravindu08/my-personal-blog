@@ -74,7 +74,15 @@ async def upload_image(request: Request, file: UploadFile = File(...)):
         with open(target_path, "wb") as out_file:
             out_file.write(contents)
 
-        base_url = str(request.base_url).rstrip("/")
-        return JSONResponse({"url": f"{base_url}/uploads/{filename}"})
+        # Mirror to frontend public/uploads directory if present (local dev / monorepo)
+        frontend_uploads = Path(os.getcwd()).parent / "my-project" / "public" / "uploads"
+        if frontend_uploads.exists():
+            try:
+                with open(frontend_uploads / filename, "wb") as f_out:
+                    f_out.write(contents)
+            except Exception:
+                pass
+
+        return JSONResponse({"url": f"/uploads/{filename}"})
     except Exception as exc:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Image upload failed: {exc}")
